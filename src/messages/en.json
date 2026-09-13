@@ -30,7 +30,8 @@
     "keyboardHint": "Arrow keys ↑ ↓ to navigate, / to search.",
     "empty": "This file contains no readable lines.",
     "exactMatch": "Exact",
-    "close": "Close"
+    "close": "Close",
+    "longPressHint": "Press and hold, then drag, to select a whole expression."
   },
   "settings": {
     "title": "Settings",
@@ -45,10 +46,46 @@
     "readFailed": "Could not read the file: {message}",
     "noDocument": "No subtitles loaded.",
     "noDocumentAction": "Load a file",
-    "retry": "Try again"
+    "retry": "Try again",
+    "dictionaryNotFound": "No definition for “{word}”.",
+    "dictionaryNotFoundHint": "It may be a proper noun, slang, or a form too rare for this dictionary. The links below often do better.",
+    "dictionaryUpstream": "The dictionary is not responding.",
+    "dictionaryNetwork": "No connection.",
+    "dictionaryRetryHint": "The links below still work, and the word is still readable in the line."
   },
   "common": {
     "loading": "Loading…",
     "back": "Back"
+  },
+  "definition": {
+    "dictionary": "Dictionary",
+    "dictionaryLoading": "Loading dictionary…",
+    "matchedForm": "Result for “{word}”",
+    "synonyms": "Synonyms",
+    "showMore": "{count, plural, one {+ # more definition} other {+ # more definitions}}",
+    "showLess": "Show less",
+    "playAudio": "Play pronunciation",
+    "externalLinks": "Elsewhere",
+    "expressionNoEntry": "The English dictionary only indexes single words: it has no entry for an expression.",
+    "expressionHint": "WordReference below covers expressions and phrasal verbs. Contextual meaning arrives in step 4.",
+    "partOfSpeech": {
+      "noun": "noun",
+      "verb": "verb",
+      "adjective": "adjective",
+      "adverb": "adverb",
+      "pronoun": "pronoun",
+      "preposition": "preposition",
+      "conjunction": "conjunction",
+      "interjection": "interjection",
+      "exclamation": "exclamation",
+      "determiner": "determiner",
+      "article": "article",
+      "numeral": "numeral",
+      "particle": "particle",
+      "abbreviation": "abbreviation",
+      "phrase": "phrase",
+      "prefix": "prefix",
+      "suffix": "suffix"
+    }
   }
 }

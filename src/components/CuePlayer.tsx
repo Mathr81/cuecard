@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useRef, type TouchEvent } from 'react';
-import { CueText } from '@/components/CueText';
+import { CueText, type CueSelection } from '@/components/CueText';
 import { formatTimestamp } from '@/lib/time';
 import type { Cue } from '@/lib/subtitles/types';
 
@@ -15,11 +15,14 @@ interface Props {
   currentIndex: number;
   onSelect: (index: number) => void;
   onStep: (delta: number) => void;
+  selection: CueSelection | null;
+  onLookup: (selection: CueSelection, term: string) => void;
 }
 
-export function CuePlayer({ cues, currentIndex, onSelect, onStep }: Props) {
+export function CuePlayer({ cues, currentIndex, onSelect, onStep, selection, onLookup }: Props) {
   const t = useTranslations('reader');
   const gesture = useRef<{ x: number; y: number } | null>(null);
+  const selecting = useRef(false);
 
   const current = cues[currentIndex];
   const before = cues.slice(Math.max(0, currentIndex - CONTEXT), currentIndex);
@@ -34,6 +37,10 @@ export function CuePlayer({ cues, currentIndex, onSelect, onStep }: Props) {
     const start = gesture.current;
     gesture.current = null;
     if (!start) return;
+
+    // Une sélection d'expression se termine par un glissement horizontal :
+    // ce n'est pas une demande de changer de réplique.
+    if (selecting.current) return;
 
     const touch = event.changedTouches[0];
     const dx = touch.clientX - start.x;
@@ -71,7 +78,14 @@ export function CuePlayer({ cues, currentIndex, onSelect, onStep }: Props) {
             {formatTimestamp(current.startMs)}
           </span>
           <div className="text-2xl font-medium leading-tight text-ink sm:text-3xl">
-            <CueText text={current.text} />
+            <CueText
+              text={current.text}
+              selection={selection}
+              onLookup={onLookup}
+              onSelectingChange={(value) => {
+                selecting.current = value;
+              }}
+            />
           </div>
         </div>
 

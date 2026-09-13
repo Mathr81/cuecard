@@ -39,10 +39,36 @@ externes seront en place — l'étape 1 n'a besoin d'aucune clé.
 
 - [x] **Étape 1** — parsing SRT/VTT, lecteur de répliques, recherche floue,
       à partir d'un fichier chargé à la main.
-- [ ] Étape 2 — tap sur un mot + dictionaryapi.dev dans une bottom sheet.
+- [x] **Étape 2** — tap sur un mot, sélection d'expression, dictionnaire dans
+      une bottom sheet.
 - [ ] Étape 3 — TMDB + OpenSubtitles, calibrage et mémorisation de l'offset.
 - [ ] Étape 4 — sens en contexte via OpenRouter.
 - [ ] Étape 5 — carnet de vocabulaire, export Anki, PWA hors ligne.
+
+## Ce que fait l'étape 2
+
+**Sélection** (`src/components/CueText.tsx`) — un tap sur un mot ouvre sa
+définition ; un appui long suivi d'un glissement sélectionne une expression
+entière, y compris à cheval sur deux lignes. Pendant la sélection, le lecteur
+cesse d'interpréter le glissement comme un changement de réplique.
+
+**Panneau** (`src/components/BottomSheet.tsx`) — feuille glissante en bas sur
+mobile, fermable au balayage vers le bas, à la croix, au fond ou à Échap ;
+panneau latéral sur desktop. Toujours monté, donc les deux sens s'animent.
+
+**Dictionnaire** (`/api/dictionary/[word]`) — appel serveur vers
+dictionaryapi.dev, validé par zod et normalisé : phonétique, bouton audio,
+définitions regroupées par nature grammaticale, exemples, synonymes. Les
+formes fléchies sont rattrapées côté serveur (`running` → `run`,
+`chances` → `chance`, `wolves` → `wolf`) et la feuille dit quelle forme a
+répondu. Résultats mis en cache côté serveur et côté client.
+
+**Liens externes** — WordReference, Youglish, Wiktionary. De simples liens,
+aucun scraping.
+
+Chaque cas d'échec a son message et sa porte de sortie : mot introuvable,
+dictionnaire injoignable (avec bouton « réessayer »), expression sans entrée
+de dictionnaire — et les liens externes restent toujours affichés.
 
 ## Ce que fait l'étape 1
 

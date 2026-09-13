@@ -30,7 +30,8 @@
     "keyboardHint": "Flèches ↑ ↓ pour naviguer, / pour chercher.",
     "empty": "Ce fichier ne contient aucune réplique lisible.",
     "exactMatch": "Exact",
-    "close": "Fermer"
+    "close": "Fermer",
+    "longPressHint": "Appui long puis glissement pour sélectionner une expression entière."
   },
   "settings": {
     "title": "Réglages",
@@ -45,10 +46,46 @@
     "readFailed": "Impossible de lire le fichier : {message}",
     "noDocument": "Aucun sous-titre chargé.",
     "noDocumentAction": "Charger un fichier",
-    "retry": "Réessayer"
+    "retry": "Réessayer",
+    "dictionaryNotFound": "Aucune définition pour « {word} ».",
+    "dictionaryNotFoundHint": "C'est peut-être un nom propre, de l'argot, ou une forme trop rare pour ce dictionnaire. Les liens ci-dessous s'en sortent souvent mieux.",
+    "dictionaryUpstream": "Le dictionnaire ne répond pas.",
+    "dictionaryNetwork": "Pas de connexion.",
+    "dictionaryRetryHint": "Les liens ci-dessous fonctionnent toujours, et le mot reste lisible dans la réplique."
   },
   "common": {
     "loading": "Chargement…",
     "back": "Retour"
+  },
+  "definition": {
+    "dictionary": "Dictionnaire",
+    "dictionaryLoading": "Chargement du dictionnaire…",
+    "matchedForm": "Résultat pour « {word} »",
+    "synonyms": "Synonymes",
+    "showMore": "{count, plural, one {+ # autre définition} other {+ # autres définitions}}",
+    "showLess": "Réduire",
+    "playAudio": "Écouter la prononciation",
+    "externalLinks": "Ailleurs",
+    "expressionNoEntry": "Le dictionnaire anglais n'indexe que des mots seuls : il n'a pas d'entrée pour une expression.",
+    "expressionHint": "WordReference ci-dessous couvre les expressions et les phrasal verbs. Le sens en contexte arrive à l'étape 4.",
+    "partOfSpeech": {
+      "noun": "nom",
+      "verb": "verbe",
+      "adjective": "adjectif",
+      "adverb": "adverbe",
+      "pronoun": "pronom",
+      "preposition": "préposition",
+      "conjunction": "conjonction",
+      "interjection": "interjection",
+      "exclamation": "exclamation",
+      "determiner": "déterminant",
+      "article": "article",
+      "numeral": "numéral",
+      "particle": "particule",
+      "abbreviation": "abréviation",
+      "phrase": "locution",
+      "prefix": "préfixe",
+      "suffix": "suffixe"
+    }
   }
 }

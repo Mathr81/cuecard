@@ -5,6 +5,8 @@ import { useTranslations } from 'next-intl';
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { CuePlayer } from '@/components/CuePlayer';
 import { CueSearchResults } from '@/components/CueSearchResults';
+import type { CueSelection } from '@/components/CueText';
+import { DefinitionPanel, type Lookup } from '@/components/DefinitionPanel';
 import { CueSearchIndex } from '@/lib/subtitles/search';
 import { useSubtitleStore } from '@/store/subtitles';
 
@@ -20,9 +22,16 @@ export function ReaderScreen() {
   const step = useSubtitleStore((state) => state.step);
 
   const [query, setQuery] = useState('');
+  const [lookup, setLookup] = useState<
+    (Lookup & { selection: CueSelection; cueIndex: number }) | null
+  >(null);
   const deferredQuery = useDeferredValue(query);
   const inputRef = useRef<HTMLInputElement>(null);
   const focusedFor = useRef<string | null>(null);
+
+  // Changer de réplique referme la feuille : une définition n'a de sens que
+  // pour la réplique dont elle vient.
+  const activeLookup = lookup?.cueIndex === currentIndex ? lookup : null;
 
   const searchIndex = useMemo(() => (doc ? new CueSearchIndex(doc.cues) : null), [doc]);
   const results = useMemo(
@@ -152,7 +161,21 @@ export function ReaderScreen() {
       ) : (
         <>
           <main className="flex flex-1 flex-col overflow-hidden">
-            <CuePlayer cues={doc.cues} currentIndex={currentIndex} onSelect={goTo} onStep={step} />
+            <CuePlayer
+              cues={doc.cues}
+              currentIndex={currentIndex}
+              onSelect={goTo}
+              onStep={step}
+              selection={activeLookup?.selection ?? null}
+              onLookup={(selection, term) =>
+                setLookup({
+                  selection,
+                  term,
+                  cueIndex: currentIndex,
+                  context: doc.cues[currentIndex].text.replace(/\n/g, ' '),
+                })
+              }
+            />
           </main>
           <nav className="pb-safe shrink-0 border-t border-line bg-night px-3 pt-3">
             <div className="flex items-stretch gap-3">
@@ -174,6 +197,8 @@ export function ReaderScreen() {
           </nav>
         </>
       )}
+
+      <DefinitionPanel lookup={activeLookup} onClose={() => setLookup(null)} />
     </div>
   );
 }
