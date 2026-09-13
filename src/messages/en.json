@@ -1,0 +1,54 @@
+{
+  "app": {
+    "name": "cuecard",
+    "tagline": "Your film's subtitles, word by word."
+  },
+  "home": {
+    "title": "Load subtitles",
+    "subtitle": "Drop an .srt or .vtt file to get started. Title search comes in the next step.",
+    "dropzone": "Choose an .srt or .vtt file",
+    "dropzoneHint": "or drag it here",
+    "parsing": "Parsing file…",
+    "recent": "Resume",
+    "recentEmpty": "No file loaded yet.",
+    "cuesCount": "{count, plural, one {# cue} other {# cues}}",
+    "openedAt": "Loaded {date}",
+    "remove": "Remove"
+  },
+  "reader": {
+    "searchPlaceholder": "Type 2 or 3 words from the line",
+    "searchLabel": "Search for a line",
+    "clear": "Clear",
+    "resultsCount": "{count, plural, =0 {No results} one {# line found} other {# lines found}}",
+    "noResults": "No line matches.",
+    "noResultsHint": "Try fewer words, or a rare word from the sentence: the search forgives typos, not invented words.",
+    "position": "{current} / {total}",
+    "previous": "Previous line",
+    "next": "Next line",
+    "backToTop": "Back to search",
+    "swipeHint": "Swipe left or right to move, or use the large buttons.",
+    "keyboardHint": "Arrow keys ↑ ↓ to navigate, / to search.",
+    "empty": "This file contains no readable lines.",
+    "exactMatch": "Exact",
+    "close": "Close"
+  },
+  "settings": {
+    "title": "Settings",
+    "uiLanguage": "Interface language",
+    "french": "Français",
+    "english": "English"
+  },
+  "errors": {
+    "unsupportedFile": "Unrecognised format. An .srt or .vtt file is required.",
+    "emptyFile": "The file is empty.",
+    "noCues": "No line could be read from this file. Check that it really is a subtitle file.",
+    "readFailed": "Could not read the file: {message}",
+    "noDocument": "No subtitles loaded.",
+    "noDocumentAction": "Load a file",
+    "retry": "Try again"
+  },
+  "common": {
+    "loading": "Loading…",
+    "back": "Back"
+  }
+}

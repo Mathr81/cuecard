@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@theme {
+  --color-night: #07080b;
+  --color-surface: #12141a;
+  --color-surface-high: #1c202a;
+  --color-line: #2b303c;
+  --color-ink: #f4f6fa;
+  --color-muted: #a3acbd;
+  --color-dim: #6b7484;
+  --color-accent: #7dd3fc;
+  --color-accent-ink: #04121a;
+  --color-danger: #fca5a5;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background-color: var(--color-night);
+  color: var(--color-ink);
+  /* L'app est consultée dans le noir : pas de rebond élastique qui laisse
+     apparaître une bande blanche en haut de l'écran. */
+  overscroll-behavior-y: none;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer utilities {
+  /* Encoches et barre de gestes : le contenu ne doit jamais passer dessous. */
+  .pt-safe {
+    padding-top: max(0.75rem, env(safe-area-inset-top));
+  }
+  .pb-safe {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+  .mb-safe {
+    margin-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Chrome et Safari ajoutent leur propre croix dans un input[type=search] :
+   elle doublait la nôtre, qui est la seule assez grande pour le pouce. */
+input[type='search']::-webkit-search-cancel-button,
+input[type='search']::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Le lecteur se navigue au balayage : la sélection de texte au glissement
+   parasite le geste. La sélection reste possible dans les champs. */
+.no-text-select {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

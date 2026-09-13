@@ -1,0 +1,54 @@
+{
+  "app": {
+    "name": "cuecard",
+    "tagline": "Les sous-titres de ton film, mot à mot."
+  },
+  "home": {
+    "title": "Charger des sous-titres",
+    "subtitle": "Dépose un fichier .srt ou .vtt pour commencer. La recherche de titre arrive à l'étape suivante.",
+    "dropzone": "Choisir un fichier .srt ou .vtt",
+    "dropzoneHint": "ou glisse-le ici",
+    "parsing": "Analyse du fichier…",
+    "recent": "Reprendre",
+    "recentEmpty": "Aucun fichier chargé pour l'instant.",
+    "cuesCount": "{count, plural, one {# réplique} other {# répliques}}",
+    "openedAt": "Chargé le {date}",
+    "remove": "Retirer"
+  },
+  "reader": {
+    "searchPlaceholder": "Tape 2 ou 3 mots de la réplique",
+    "searchLabel": "Rechercher une réplique",
+    "clear": "Effacer",
+    "resultsCount": "{count, plural, =0 {Aucun résultat} one {# réplique trouvée} other {# répliques trouvées}}",
+    "noResults": "Aucune réplique ne correspond.",
+    "noResultsHint": "Essaie moins de mots, ou un mot rare de la phrase : la recherche tolère les fautes de frappe mais pas les mots inventés.",
+    "position": "{current} / {total}",
+    "previous": "Réplique précédente",
+    "next": "Réplique suivante",
+    "backToTop": "Revenir à la recherche",
+    "swipeHint": "Balaye vers la gauche ou la droite pour avancer, ou utilise les gros boutons.",
+    "keyboardHint": "Flèches ↑ ↓ pour naviguer, / pour chercher.",
+    "empty": "Ce fichier ne contient aucune réplique lisible.",
+    "exactMatch": "Exact",
+    "close": "Fermer"
+  },
+  "settings": {
+    "title": "Réglages",
+    "uiLanguage": "Langue de l'interface",
+    "french": "Français",
+    "english": "English"
+  },
+  "errors": {
+    "unsupportedFile": "Format non reconnu. Il faut un fichier .srt ou .vtt.",
+    "emptyFile": "Le fichier est vide.",
+    "noCues": "Aucune réplique n'a pu être lue dans ce fichier. Vérifie qu'il s'agit bien de sous-titres et non d'une description.",
+    "readFailed": "Impossible de lire le fichier : {message}",
+    "noDocument": "Aucun sous-titre chargé.",
+    "noDocumentAction": "Charger un fichier",
+    "retry": "Réessayer"
+  },
+  "common": {
+    "loading": "Chargement…",
+    "back": "Retour"
+  }
+}
