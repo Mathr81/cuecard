@@ -51,7 +51,17 @@
     "dictionaryNotFoundHint": "C'est peut-être un nom propre, de l'argot, ou une forme trop rare pour ce dictionnaire. Les liens ci-dessous s'en sortent souvent mieux.",
     "dictionaryUpstream": "Le dictionnaire ne répond pas.",
     "dictionaryNetwork": "Pas de connexion.",
-    "dictionaryRetryHint": "Les liens ci-dessous fonctionnent toujours, et le mot reste lisible dans la réplique."
+    "dictionaryRetryHint": "Les liens ci-dessous fonctionnent toujours, et le mot reste lisible dans la réplique.",
+    "external": {
+      "missing_key": "Clé d'API manquante pour {service}. Renseigne-la dans .env.local, puis relance l'app.",
+      "unauthorized": "{service} refuse la clé d'API. Vérifie qu'elle est correcte et active.",
+      "rate_limited": "Trop de requêtes vers {service} d'un coup. Attends quelques secondes.",
+      "quota_exhausted": "Quota de téléchargements {service} épuisé pour aujourd'hui. Il se réinitialise dans la journée ; en attendant, tu peux charger un .srt à la main.",
+      "not_found": "{service} n'a rien pour ce titre.",
+      "upstream": "{service} répond de travers. Ce n'est pas de ton côté.",
+      "network": "Pas de connexion à {service}.",
+      "invalid_request": "Requête refusée par l'app. C'est un bug, pas une manipulation de ta part."
+    }
   },
   "common": {
     "loading": "Chargement…",
@@ -87,5 +97,56 @@
       "prefix": "préfixe",
       "suffix": "suffixe"
     }
+  },
+  "titles": {
+    "searchPlaceholder": "Titre du film ou de la série",
+    "searchLabel": "Rechercher un titre",
+    "searching": "Recherche sur TMDB…",
+    "noResults": "Aucun titre ne correspond.",
+    "noResultsHint": "Essaie le titre original en anglais : c'est souvent celui que TMDB connaît le mieux.",
+    "mediaType": {
+      "movie": "Film",
+      "tv": "Série"
+    },
+    "pickSeason": "Choisis une saison",
+    "pickEpisode": "Saison {season} — choisis un épisode",
+    "episodeCount": "{count, plural, one {# épisode} other {# épisodes}}",
+    "historyEmpty": "Aucun titre consulté pour l'instant.",
+    "forget": "Retirer de l'historique",
+    "unavailable": "Titre indisponible",
+    "uploadSection": "Charger un fichier .srt à la main",
+    "uploadHint": "Utile quand OpenSubtitles n'a rien, ou quand le quota du jour est épuisé.",
+    "opened": "en cours"
+  },
+  "subtitles": {
+    "choose": "Choisis une source",
+    "searching": "Recherche des sous-titres anglais…",
+    "best": "Le plus téléchargé",
+    "downloads": "{count, plural, one {# téléchargement} other {# téléchargements}}",
+    "trusted": "uploadeur de confiance",
+    "hearingImpaired": "sourds et malentendants",
+    "downloading": "Téléchargement…",
+    "none": "Aucun sous-titre anglais pour ce titre.",
+    "noneHint": "OpenSubtitles n'a rien indexé pour cet identifiant TMDB. Un fichier chargé à la main marche aussi bien.",
+    "uploadInstead": "Charger un .srt à la main"
+  },
+  "timing": {
+    "gotoButton": "Aller au temps",
+    "gotoTitle": "Aller à un moment",
+    "gotoHelp": "Tape le temps affiché par ton lecteur. Le décalage calé est appliqué automatiquement.",
+    "gotoPreview": "Aller à {time}",
+    "gotoAction": "Aller",
+    "calibrateButton": "Caler",
+    "calibrateTitle": "Caler le timing",
+    "calibrateHelp": "Cette réplique est à {time} dans le fichier. Tape le temps affiché par ton lecteur au même instant : le décalage sera mémorisé pour ce titre et cette source.",
+    "calibratePreview": "Décalage : {offset}",
+    "calibrateAction": "Mémoriser le décalage",
+    "placeholder": "1:23:45, 83:45, 1h23 ou 5023",
+    "inputLabel": "Temps affiché par le lecteur",
+    "invalid": "Temps non reconnu.",
+    "resetOffset": "Réinitialiser le décalage",
+    "offsetOutOfRange": "Décalage de {offset} : c'est sûrement le temps qui est mal tapé.",
+    "offsetUnusual": "c'est inhabituel, vérifie",
+    "offsetNotSaved": "Décalage appliqué pour cette session, mais pas mémorisé : l'enregistrement a échoué."
   }
 }

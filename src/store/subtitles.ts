@@ -60,6 +60,9 @@ export const useSubtitleStore = create<SubtitleState>()(
     }),
     {
       name: 'cuecard.subtitles',
+      // La forme du document a changé à l'étape 3 : mieux vaut repartir d'un
+      // état vide que de réanimer un document sans clé de titre.
+      version: 2,
       storage: createJSONStorage(() => indexedDbStorage),
       partialize: (state) => ({ document: state.document, currentIndex: state.currentIndex }),
       // `hydrated` n'est pas persisté : il signale que la lecture asynchrone

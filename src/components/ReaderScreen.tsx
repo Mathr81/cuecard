@@ -7,6 +7,10 @@ import { CuePlayer } from '@/components/CuePlayer';
 import { CueSearchResults } from '@/components/CueSearchResults';
 import type { CueSelection } from '@/components/CueText';
 import { DefinitionPanel, type Lookup } from '@/components/DefinitionPanel';
+import { TimeSheet, type TimeSheetMode } from '@/components/TimeSheet';
+import { useOffset } from '@/hooks/useOffset';
+import { computeOffset, findCueAtTime, toCueTime } from '@/lib/subtitles/offset';
+import { formatOffset } from '@/lib/time';
 import { CueSearchIndex } from '@/lib/subtitles/search';
 import { useSubtitleStore } from '@/store/subtitles';
 
@@ -14,6 +18,7 @@ export function ReaderScreen() {
   const t = useTranslations('reader');
   const tErrors = useTranslations('errors');
   const tCommon = useTranslations('common');
+  const tTiming = useTranslations('timing');
 
   const doc = useSubtitleStore((state) => state.document);
   const hydrated = useSubtitleStore((state) => state.hydrated);
@@ -25,6 +30,13 @@ export function ReaderScreen() {
   const [lookup, setLookup] = useState<
     (Lookup & { selection: CueSelection; cueIndex: number }) | null
   >(null);
+  const [timeSheet, setTimeSheet] = useState<TimeSheetMode | null>(null);
+  const {
+    offsetMs,
+    saveFailed: offsetSaveFailed,
+    save: saveOffset,
+    reset: resetOffset,
+  } = useOffset(doc?.titleKey ?? null, doc?.fileId ?? null);
   const deferredQuery = useDeferredValue(query);
   const inputRef = useRef<HTMLInputElement>(null);
   const focusedFor = useRef<string | null>(null);
@@ -152,6 +164,45 @@ export function ReaderScreen() {
             </button>
           ) : null}
         </div>
+
+        {/* Mode B : la recherche par temps reste à un tap, sans encombrer le
+            mode texte qui est celui que j'utilise dix fois sur dix. */}
+        <div className="mt-2 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setTimeSheet('goto')}
+            className="min-h-11 whitespace-nowrap rounded-xl border border-line bg-surface px-3 text-sm font-medium text-muted"
+          >
+            {tTiming('gotoButton')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setTimeSheet('calibrate')}
+            className="min-h-11 whitespace-nowrap rounded-xl border border-line bg-surface px-3 text-sm font-medium text-muted"
+          >
+            {tTiming('calibrateButton')}
+          </button>
+
+          {offsetMs !== 0 ? (
+            <span className="ml-auto flex items-center gap-1 rounded-full bg-accent/15 py-1 pl-3 pr-1 text-sm font-mono text-accent">
+              {formatOffset(offsetMs)}
+              <button
+                type="button"
+                onClick={resetOffset}
+                aria-label={tTiming('resetOffset')}
+                className="flex size-9 items-center justify-center rounded-full text-base"
+              >
+                ×
+              </button>
+            </span>
+          ) : null}
+        </div>
+
+        {offsetSaveFailed ? (
+          <p role="alert" className="mt-1 text-xs text-danger">
+            {tTiming('offsetNotSaved')}
+          </p>
+        ) : null}
       </header>
 
       {searching ? (
@@ -197,6 +248,20 @@ export function ReaderScreen() {
           </nav>
         </>
       )}
+
+      <TimeSheet
+        mode={timeSheet}
+        currentCueStartMs={doc.cues[currentIndex].startMs}
+        onClose={() => setTimeSheet(null)}
+        onSubmit={(mode, playerMs) => {
+          if (mode === 'calibrate') {
+            saveOffset(computeOffset(playerMs, doc.cues[currentIndex].startMs));
+          } else {
+            goTo(findCueAtTime(doc.cues, toCueTime(playerMs, offsetMs)));
+          }
+          setTimeSheet(null);
+        }}
+      />
 
       <DefinitionPanel lookup={activeLookup} onClose={() => setLookup(null)} />
     </div>

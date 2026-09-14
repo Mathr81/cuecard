@@ -1,11 +1,19 @@
 import { getTranslations } from 'next-intl/server';
 import { LocaleSwitch } from '@/components/LocaleSwitch';
 import { RecentDocument } from '@/components/RecentDocument';
+import { RecentTitles } from '@/components/RecentTitles';
 import { SubtitleDropzone } from '@/components/SubtitleDropzone';
+import { TitleSearch } from '@/components/TitleSearch';
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ upload?: string }>;
+}) {
+  const { upload } = await searchParams;
   const t = await getTranslations('home');
   const tApp = await getTranslations('app');
+  const tTitles = await getTranslations('titles');
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-xl flex-col px-4">
@@ -17,17 +25,24 @@ export default async function HomePage() {
         <LocaleSwitch />
       </header>
 
-      <main className="flex flex-1 flex-col gap-6 py-4">
-        <section className="flex flex-col gap-3">
-          <h2 className="text-2xl font-bold tracking-tight">{t('title')}</h2>
-          <p className="text-sm leading-relaxed text-muted">{t('subtitle')}</p>
-          <SubtitleDropzone />
-        </section>
+      <main className="pb-safe flex flex-1 flex-col gap-6 py-2">
+        <TitleSearch />
 
         <section className="flex flex-col gap-3">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-dim">{t('recent')}</h2>
           <RecentDocument />
+          <RecentTitles />
         </section>
+
+        <details open={upload === '1'} className="rounded-2xl border border-line bg-surface/50 p-3">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center text-sm font-semibold text-muted">
+            {tTitles('uploadSection')}
+          </summary>
+          <div className="mt-3 flex flex-col gap-2">
+            <p className="text-sm leading-relaxed text-dim">{tTitles('uploadHint')}</p>
+            <SubtitleDropzone />
+          </div>
+        </details>
       </main>
     </div>
   );

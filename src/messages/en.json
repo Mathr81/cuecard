@@ -51,7 +51,17 @@
     "dictionaryNotFoundHint": "It may be a proper noun, slang, or a form too rare for this dictionary. The links below often do better.",
     "dictionaryUpstream": "The dictionary is not responding.",
     "dictionaryNetwork": "No connection.",
-    "dictionaryRetryHint": "The links below still work, and the word is still readable in the line."
+    "dictionaryRetryHint": "The links below still work, and the word is still readable in the line.",
+    "external": {
+      "missing_key": "Missing API key for {service}. Set it in .env.local, then restart the app.",
+      "unauthorized": "{service} rejects the API key. Check that it is correct and active.",
+      "rate_limited": "Too many requests to {service} at once. Wait a few seconds.",
+      "quota_exhausted": "{service} download quota spent for today. It resets during the day; meanwhile you can load an .srt by hand.",
+      "not_found": "{service} has nothing for this title.",
+      "upstream": "{service} is answering oddly. This is not on your side.",
+      "network": "No connection to {service}.",
+      "invalid_request": "The app made a request it should not have. That is a bug, not something you did."
+    }
   },
   "common": {
     "loading": "Loading…",
@@ -87,5 +97,56 @@
       "prefix": "prefix",
       "suffix": "suffix"
     }
+  },
+  "titles": {
+    "searchPlaceholder": "Film or series title",
+    "searchLabel": "Search for a title",
+    "searching": "Searching TMDB…",
+    "noResults": "No title matches.",
+    "noResultsHint": "Try the original English title: that is usually the one TMDB knows best.",
+    "mediaType": {
+      "movie": "Film",
+      "tv": "Series"
+    },
+    "pickSeason": "Pick a season",
+    "pickEpisode": "Season {season} — pick an episode",
+    "episodeCount": "{count, plural, one {# episode} other {# episodes}}",
+    "historyEmpty": "No title opened yet.",
+    "forget": "Remove from history",
+    "unavailable": "Title unavailable",
+    "uploadSection": "Load an .srt file by hand",
+    "uploadHint": "Useful when OpenSubtitles has nothing, or the daily quota is spent.",
+    "opened": "open"
+  },
+  "subtitles": {
+    "choose": "Pick a source",
+    "searching": "Searching for English subtitles…",
+    "best": "Most downloaded",
+    "downloads": "{count, plural, one {# download} other {# downloads}}",
+    "trusted": "trusted uploader",
+    "hearingImpaired": "hearing impaired",
+    "downloading": "Downloading…",
+    "none": "No English subtitles for this title.",
+    "noneHint": "OpenSubtitles has nothing indexed for this TMDB id. A hand-loaded file works just as well.",
+    "uploadInstead": "Load an .srt by hand"
+  },
+  "timing": {
+    "gotoButton": "Go to time",
+    "gotoTitle": "Go to a moment",
+    "gotoHelp": "Type the time your player shows. The calibrated offset is applied automatically.",
+    "gotoPreview": "Go to {time}",
+    "gotoAction": "Go",
+    "calibrateButton": "Calibrate",
+    "calibrateTitle": "Calibrate the timing",
+    "calibrateHelp": "This line sits at {time} in the file. Type the time your player shows at that same instant: the offset is remembered for this title and this source.",
+    "calibratePreview": "Offset: {offset}",
+    "calibrateAction": "Remember this offset",
+    "placeholder": "1:23:45, 83:45, 1h23 or 5023",
+    "inputLabel": "Time shown by the player",
+    "invalid": "Unrecognised time.",
+    "resetOffset": "Reset the offset",
+    "offsetOutOfRange": "An offset of {offset}: the time is most likely mistyped.",
+    "offsetUnusual": "that is unusual, double-check",
+    "offsetNotSaved": "Offset applied for this session but not remembered: saving failed."
   }
 }

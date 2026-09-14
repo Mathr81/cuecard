@@ -1,3 +1,5 @@
+import type { TitleRef } from '@/lib/titles/types';
+
 /** Une réplique de sous-titre, nettoyée et prête à être affichée. */
 export interface Cue {
   /** Position dans le fichier, réindexée à partir de 0 après fusion. */
@@ -9,13 +11,20 @@ export interface Cue {
 }
 
 export interface SubtitleDocument {
+  /** `${titleKey}#${fileId}` : identifie le couple titre / source. */
   id: string;
-  /** Nom affiché : nom du fichier uploadé, ou titre TMDB plus tard. */
+  /** Clé du titre, pour l'historique et le décalage mémorisé. */
+  titleKey: string;
+  /** Identifiant de la source : file_id OpenSubtitles, ou "upload". */
+  fileId: string;
   name: string;
-  source: 'upload';
-  /** Encodage détecté à la lecture du fichier, affiché en cas de doute. */
+  /** Deuxième ligne : "S01E04 · Titre de l'épisode", ou le nom de la release. */
+  subtitle: string | null;
+  source: 'upload' | 'opensubtitles';
+  releaseName: string | null;
   encoding: string;
   format: 'srt' | 'vtt';
   cues: Cue[];
   loadedAt: number;
+  title: TitleRef | null;
 }

@@ -10,7 +10,7 @@ textuelle** d'une réplique, pas le timestamp.
 ## Stack
 
 Next.js (App Router) · TypeScript · Tailwind CSS v4 · next-intl (FR / EN) ·
-Fuse.js · Zustand + IndexedDB.
+Fuse.js · Zustand + IndexedDB · SQLite (better-sqlite3) · zod.
 
 ## Démarrer
 
@@ -21,8 +21,10 @@ npm run dev
 
 Puis ouvrir <http://localhost:3000> et charger un fichier `.srt` ou `.vtt`.
 
-Copier `.env.example` vers `.env.local` quand les étapes qui appellent des API
-externes seront en place — l'étape 1 n'a besoin d'aucune clé.
+Copier `.env.example` vers `.env.local` et renseigner `TMDB_API_KEY` et
+`OPENSUBTITLES_API_KEY` pour la recherche de titres et le téléchargement des
+sous-titres. Sans clés, le chargement manuel d'un `.srt` fonctionne toujours,
+et chaque écran dit précisément quelle clé manque.
 
 ## Scripts
 
@@ -41,9 +43,38 @@ externes seront en place — l'étape 1 n'a besoin d'aucune clé.
       à partir d'un fichier chargé à la main.
 - [x] **Étape 2** — tap sur un mot, sélection d'expression, dictionnaire dans
       une bottom sheet.
-- [ ] Étape 3 — TMDB + OpenSubtitles, calibrage et mémorisation de l'offset.
+- [x] **Étape 3** — TMDB + OpenSubtitles, calibrage et mémorisation du décalage.
 - [ ] Étape 4 — sens en contexte via OpenRouter.
 - [ ] Étape 5 — carnet de vocabulaire, export Anki, PWA hors ligne.
+
+## Ce que fait l'étape 3
+
+**Recherche de titre** — TMDB `/search/multi` : affiche, année, film ou série.
+Pour une série, saison puis épisode. Historique des dix derniers titres
+consultés en accès direct sur l'accueil, stocké en base ; celui qui est déjà
+chargé est marqué « en cours » et renvoie droit au lecteur, sans reconsommer
+de quota.
+
+**Sous-titres** — OpenSubtitles API v1, anglais, triés par nombre de
+téléchargements, les trois meilleurs candidats avec leur nom de release, leur
+compte de téléchargements et leurs étiquettes. Un épisode est cherché par
+série + saison + épisode, bien plus fiable que par l'id TMDB de l'épisode.
+User-Agent obligatoire envoyé, appels espacés de 250 ms. Chaque fichier
+téléchargé est mis en cache en base par `file_id` : le quota journalier ne
+paie jamais deux fois le même fichier.
+
+**Calibrage** — le mode texte reste l'entrée principale ; deux boutons sous le
+champ donnent accès au mode temps. « Caler » demande le temps affiché par le
+lecteur pour la réplique courante, calcule le décalage et le mémorise pour ce
+titre **et** cette source. Toutes les recherches par temps suivantes sont
+corrigées. Le décalage actif s'affiche discrètement (« +12s ») avec un bouton
+pour le remettre à zéro. Un décalage aberrant est refusé avant d'être envoyé,
+et un échec d'enregistrement est dit à l'écran plutôt que tu. Le champ accepte
+`1:23:45`, `83:45`, `1h23`, `12min30` ou `5023`.
+
+**Base** — SQLite via better-sqlite3 : historique, cache des fichiers,
+décalages. Le fichier vit dans `.data/cuecard.db` (surchargeable par
+`CUECARD_DB_PATH`).
 
 ## Ce que fait l'étape 2
 

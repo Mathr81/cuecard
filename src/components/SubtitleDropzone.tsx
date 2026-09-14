@@ -42,14 +42,22 @@ export function SubtitleDropzone() {
         return;
       }
 
+      // Clé stable : recharger deux fois le même fichier retrouve son décalage.
+      const titleKey = `upload:${file.name}:${file.size}:${file.lastModified}`;
+
       loadDocument({
-        id: `${file.name}:${file.size}:${file.lastModified}`,
+        id: `${titleKey}#upload`,
+        titleKey,
+        fileId: 'upload',
         name: file.name.replace(/\.[^.]+$/, ''),
+        subtitle: null,
         source: 'upload',
+        releaseName: null,
         encoding,
         format,
         cues,
         loadedAt: Date.now(),
+        title: null,
       });
       router.push('/reader');
     } catch (cause) {
