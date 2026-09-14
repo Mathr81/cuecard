@@ -84,9 +84,11 @@ le bloc `ports` du `docker-compose.yml`.
 
 L'image est construite en trois étapes et ne contient que la sortie
 `standalone` de Next : pas de `node_modules` complet, pas de chaîne de
-compilation. `better-sqlite3` embarque ses binaires précompilés pour glibc et
-musl, x64 et arm64, donc rien ne se compile à l'install et un VPS ARM marche
-aussi bien qu'un x86.
+compilation. `better-sqlite3` livre ses binaires précompilés pour glibc et
+musl, x64 et arm64 ; l'installation coupe les scripts (`--ignore-scripts`)
+pour que npm ne tente pas de recompiler ce qui est déjà là — sans quoi le
+build échoue sur arm64 faute de Python et de compilateur. Un VPS ARM marche
+donc aussi bien qu'un x86.
 
 Sauvegarde : tout l'état tient dans `./data/cuecard.db` — historique, cache
 des sous-titres, décalages calés, explications déjà payées et carnet de

@@ -1,12 +1,20 @@
 # syntax=docker/dockerfile:1
 
-# better-sqlite3 v13 embarque ses binaires précompilés (glibc et musl, x64 et
-# arm64) : aucune compilation n'est nécessaire, donc pas de chaîne de build
-# dans l'image, et l'ensemble marche tel quel sur un VPS ARM.
+# better-sqlite3 v13 livre ses binaires précompilés dans son paquet npm (glibc
+# et musl, x64 et arm64). Mais il livre aussi un binding.gyp, et npm en déduit
+# qu'il faut compiler : sur arm64/musl il lance node-gyp, qui échoue faute de
+# Python et de compilateur. Couper les scripts d'installation évite cette
+# compilation inutile — le binaire déjà présent est chargé au require — et
+# aucune dépendance de ce projet n'a besoin d'un script d'installation.
 FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --ignore-scripts
+
+# Si aucun binaire ne convenait à cette plateforme, autant l'apprendre ici
+# plutôt que de voir le conteneur boucler au démarrage.
+RUN node -e "require('better-sqlite3')(':memory:').exec('CREATE TABLE probe(x)')"
+
 
 FROM node:22-alpine AS builder
 WORKDIR /app
