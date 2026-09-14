@@ -115,9 +115,12 @@ export function ReviewSession() {
             <HighlightedText text={entry.cueText} query={entry.term} />
           </p>
           <p className="mt-3 text-center font-mono text-xs tabular-nums text-dim">
-            {[entry.titleName, entry.episodeLabel, formatTimestamp(entry.startMs)]
-              .filter(Boolean)
-              .join(' · ')}
+            {/* Un seul point médian par ligne : le titre et l'épisode se
+                suivent, le temps est ce qu'on en détache. */}
+            {[
+              [entry.titleName, entry.episodeLabel].filter(Boolean).join(' '),
+              formatTimestamp(entry.startMs),
+            ].join(' · ')}
           </p>
 
           {revealed ? (

@@ -43,7 +43,7 @@
     "english": "English",
     "tokens": "Usage",
     "tokensHelp": "Since the last reset, across every device. Rates come from OpenRouter.",
-    "tokensBreakdown": "{prompt, number} in · {completion, number} out",
+    "tokensBreakdown": "{prompt, number} in, {completion, number} out",
     "tokensCalls": "Paid calls",
     "tokensCached": "Served from cache",
     "tokensSince": "Since",
