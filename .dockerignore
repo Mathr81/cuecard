@@ -1,0 +1,15 @@
+.git
+.github
+node_modules
+.next
+.data
+data
+coverage
+*.log
+.env
+.env.*
+!.env.example
+Dockerfile
+docker-compose.yml
+caddy
+README.md

@@ -31,6 +31,58 @@ chaque écran dit précisément quelle clé manque.
 départ rapide et bon marché, à changer selon ce qui est disponible. Le modèle
 en cours est affiché dans les réglages.
 
+## Déployer avec Docker
+
+```bash
+cp .env.example .env      # puis renseigner les clés
+docker compose up -d --build
+```
+
+L'app écoute sur `127.0.0.1:3000` et la base SQLite vit dans `./data`. C'est
+volontaire : cuecard n'a **aucune authentification**, l'ouvrir sur Internet
+laisserait n'importe qui brûler les quotas OpenSubtitles et OpenRouter. Pour
+l'atteindre depuis le téléphone, soit on la met derrière un proxy déjà en
+place, soit on utilise le profil ci-dessous.
+
+### HTTPS et PWA
+
+Le service worker et l'installation de la PWA **exigent HTTPS**. En HTTP,
+l'app reste utilisable mais ne s'installe pas et ne marche pas hors ligne.
+Le profil `https` ajoute Caddy, qui obtient et renouvelle le certificat tout
+seul :
+
+```bash
+echo 'CUECARD_DOMAIN=cuecard.mondomaine.fr' >> .env
+docker compose --profile https up -d --build
+```
+
+`caddy/Caddyfile` contient un bloc d'authentification basique commenté, avec
+la marche à suivre : sur un domaine public, c'est à faire.
+
+### Au quotidien
+
+```bash
+docker compose logs -f app        # les journaux
+docker compose up -d --build      # mettre à jour après un git pull
+docker compose down               # arrêter (les données restent dans ./data)
+```
+
+L'image est construite en trois étapes et ne contient que la sortie
+`standalone` de Next : pas de `node_modules` complet, pas de chaîne de
+compilation. `better-sqlite3` embarque ses binaires précompilés pour glibc et
+musl, x64 et arm64, donc rien ne se compile à l'install et un VPS ARM marche
+aussi bien qu'un x86.
+
+Sauvegarde : tout l'état tient dans `./data/cuecard.db` — historique, cache
+des sous-titres, décalages calés, explications déjà payées et carnet de
+vocabulaire. Copier ce fichier suffit.
+
+Le conteneur tourne sans les droits root : l'entrypoint rend `./data`
+inscriptible puis abandonne root, donc il n'y a rien à préparer sur l'hôte
+avant le premier démarrage. La sonde de santé (`/api/health`) touche vraiment
+la base, parce qu'un serveur qui répond avec un volume mal monté n'est pas en
+bonne santé.
+
 ## Scripts
 
 | Commande            | Effet                    |

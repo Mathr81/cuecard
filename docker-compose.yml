@@ -1,0 +1,61 @@
+services:
+  app:
+    build: .
+    image: cuecard:latest
+    container_name: cuecard
+    restart: unless-stopped
+
+    # Les clés d'API viennent du .env ; sans lui l'app démarre quand même et
+    # chaque écran dit précisément laquelle manque.
+    env_file:
+      - path: .env
+        required: false
+
+    volumes:
+      # Historique, cache des sous-titres, décalages et carnet de vocabulaire.
+      - ./data:/data
+
+    # Par défaut l'app n'écoute que sur la boucle locale : elle n'a aucune
+    # authentification, et l'exposer telle quelle laisserait n'importe qui
+    # brûler les quotas OpenSubtitles et OpenRouter. Mets CUECARD_BIND=0.0.0.0
+    # seulement si le pare-feu du VPS s'en charge à ta place.
+    ports:
+      - '${CUECARD_BIND:-127.0.0.1}:${CUECARD_PORT:-3000}:3000'
+
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://127.0.0.1:3000/api/health']
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+
+  # Profil optionnel : `docker compose --profile https up -d`.
+  # Le service worker et l'installation de la PWA exigent HTTPS — sans
+  # certificat, l'app reste utilisable mais ne s'installe pas et ne marche
+  # pas hors ligne. Caddy s'en occupe tout seul via Let's Encrypt.
+  caddy:
+    image: caddy:2-alpine
+    container_name: cuecard-caddy
+    restart: unless-stopped
+    profiles: [https]
+    depends_on:
+      - app
+    environment:
+      # Sans domaine, Caddy sert « localhost » avec son autorité interne :
+      # utile pour essayer, mais un vrai certificat demande un vrai domaine.
+      CUECARD_DOMAIN: ${CUECARD_DOMAIN:-localhost}
+      # Utilisé seulement si l'authentification basique est décommentée
+      # dans caddy/Caddyfile.
+      CUECARD_BASIC_AUTH: ${CUECARD_BASIC_AUTH:-}
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  caddy-data:
+  caddy-config:
