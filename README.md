@@ -33,31 +33,40 @@ en cours est affiché dans les réglages.
 
 ## Déployer avec Docker
 
+L'app est prévue pour vivre derrière **Nginx Proxy Manager** : elle ne publie
+aucun port, NPM la joint par son nom sur le réseau Docker partagé.
+
 ```bash
 cp .env.example .env      # puis renseigner les clés
+
+# Le réseau de la stack NPM : `docker network ls` donne son nom exact
+# (souvent « npm » ou « nginx-proxy-manager_default »).
+echo 'CUECARD_NETWORK=npm' >> .env
+
 docker compose up -d --build
 ```
 
-L'app écoute sur `127.0.0.1:3000` et la base SQLite vit dans `./data`. C'est
-volontaire : cuecard n'a **aucune authentification**, l'ouvrir sur Internet
-laisserait n'importe qui brûler les quotas OpenSubtitles et OpenRouter. Pour
-l'atteindre depuis le téléphone, soit on la met derrière un proxy déjà en
-place, soit on utilise le profil ci-dessous.
+Puis dans NPM, un Proxy Host :
+
+| Champ            | Valeur    |
+| ---------------- | --------- |
+| Forward Hostname | `cuecard` |
+| Forward Port     | `3000`    |
+| Websockets       | activé    |
+| SSL              | activé    |
+
+Si `docker compose up` se plaint que le réseau n'existe pas, c'est que le nom
+dans `.env` ne correspond pas à celui de ta stack NPM.
 
 ### HTTPS et PWA
 
-Le service worker et l'installation de la PWA **exigent HTTPS**. En HTTP,
-l'app reste utilisable mais ne s'installe pas et ne marche pas hors ligne.
-Le profil `https` ajoute Caddy, qui obtient et renouvelle le certificat tout
-seul :
+Le service worker et l'installation de la PWA **exigent HTTPS**. En HTTP, l'app
+reste utilisable mais ne s'installe pas et ne marche pas hors ligne : pense à
+demander un certificat à NPM pour cet hôte.
 
-```bash
-echo 'CUECARD_DOMAIN=cuecard.mondomaine.fr' >> .env
-docker compose --profile https up -d --build
-```
-
-`caddy/Caddyfile` contient un bloc d'authentification basique commenté, avec
-la marche à suivre : sur un domaine public, c'est à faire.
+cuecard n'a **aucune authentification**. Sur un domaine public, n'importe qui
+peut brûler tes quotas OpenSubtitles et OpenRouter — la liste d'accès de NPM
+(Access Lists → Basic Auth) se charge de fermer la porte.
 
 ### Au quotidien
 
@@ -66,6 +75,9 @@ docker compose logs -f app        # les journaux
 docker compose up -d --build      # mettre à jour après un git pull
 docker compose down               # arrêter (les données restent dans ./data)
 ```
+
+Pour accéder à l'app sans passer par NPM (essai local, débogage), décommente
+le bloc `ports` du `docker-compose.yml`.
 
 L'image est construite en trois étapes et ne contient que la sortie
 `standalone` de Next : pas de `node_modules` complet, pas de chaîne de
