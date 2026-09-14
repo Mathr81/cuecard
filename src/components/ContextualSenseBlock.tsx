@@ -32,7 +32,16 @@ type State =
  * est indépendant des autres — le LLM est le plus lent des trois et ne doit
  * jamais retarder l'affichage du dictionnaire.
  */
-export function ContextualSenseBlock({ term, context }: { term: string; context: SenseContext }) {
+export function ContextualSenseBlock({
+  term,
+  context,
+  onSense,
+}: {
+  term: string;
+  context: SenseContext;
+  /** Remonte le sens obtenu : le carnet le sauvegarde avec le mot. */
+  onSense?: (sense: ContextualSense) => void;
+}) {
   const t = useTranslations('sense');
   const tErrors = useTranslations('errors');
   const record = useTokenStore((state) => state.record);
@@ -47,6 +56,7 @@ export function ContextualSenseBlock({ term, context }: { term: string; context:
       .then((data) => {
         record(data.usage, data.cached);
         setState({ status: 'ready', sense: data.sense, cached: data.cached });
+        onSense?.(data.sense);
       })
       .catch((cause: unknown) => {
         if (controller.signal.aborted) return;
@@ -54,7 +64,7 @@ export function ContextualSenseBlock({ term, context }: { term: string; context:
       });
 
     return () => controller.abort();
-  }, [term, context, record, attempt]);
+  }, [term, context, record, onSense, attempt]);
 
   const retry = useCallback(() => {
     setState({ status: 'loading' });

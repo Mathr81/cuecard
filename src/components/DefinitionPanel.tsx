@@ -1,9 +1,12 @@
 'use client';
 
+import { useCallback, useState } from 'react';
 import { BottomSheet } from '@/components/BottomSheet';
 import { ContextualSenseBlock, type SenseContext } from '@/components/ContextualSenseBlock';
 import { DictionaryBlock } from '@/components/DictionaryBlock';
 import { ExternalLinksBlock } from '@/components/ExternalLinksBlock';
+import { SaveToNotebook, type SaveTarget } from '@/components/SaveToNotebook';
+import type { ContextualSense } from '@/lib/sense/schema';
 
 export interface Lookup {
   /** Le mot ou l'expression sélectionnée, ponctuation retirée. */
@@ -12,6 +15,8 @@ export interface Lookup {
   context: string;
   /** La scène et le titre, pour l'explication en contexte. */
   scene: SenseContext;
+  /** De quoi ranger le mot dans le carnet. */
+  target: SaveTarget;
 }
 
 /**
@@ -28,15 +33,45 @@ export function DefinitionPanel({
   const term = lookup?.term ?? '';
   const isExpression = term.includes(' ');
 
+  // Le sens remonte du bloc LLM pour être sauvegardé avec le mot ; il est
+  // remis à zéro dès qu'on change de mot, via la clé du panneau.
+  const [sense, setSense] = useState<ContextualSense | null>(null);
+  const rememberSense = useCallback((value: ContextualSense) => setSense(value), []);
+
   return (
     <BottomSheet open={lookup !== null} title={term} subtitle={lookup?.context} onClose={onClose}>
       {lookup ? (
-        <>
-          <DictionaryBlock key={`dict-${term}`} term={term} isExpression={isExpression} />
-          <ContextualSenseBlock key={`sense-${term}`} term={term} context={lookup.scene} />
-          <ExternalLinksBlock term={term} />
-        </>
+        <PanelBody
+          key={term}
+          lookup={lookup}
+          isExpression={isExpression}
+          sense={sense}
+          onSense={rememberSense}
+        />
       ) : null}
     </BottomSheet>
+  );
+}
+
+function PanelBody({
+  lookup,
+  isExpression,
+  sense,
+  onSense,
+}: {
+  lookup: Lookup;
+  isExpression: boolean;
+  sense: ContextualSense | null;
+  onSense: (sense: ContextualSense) => void;
+}) {
+  return (
+    <>
+      <SaveToNotebook target={lookup.target} sense={sense} />
+      <div className="mt-5 flex flex-col">
+        <DictionaryBlock term={lookup.term} isExpression={isExpression} />
+        <ContextualSenseBlock term={lookup.term} context={lookup.scene} onSense={onSense} />
+        <ExternalLinksBlock term={lookup.term} />
+      </div>
+    </>
   );
 }

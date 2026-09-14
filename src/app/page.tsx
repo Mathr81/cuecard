@@ -15,6 +15,7 @@ export default async function HomePage({
   const tApp = await getTranslations('app');
   const tTitles = await getTranslations('titles');
   const tSettings = await getTranslations('settings');
+  const tVocabulary = await getTranslations('vocabulary');
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-xl flex-col px-4">
@@ -23,6 +24,12 @@ export default async function HomePage({
           <h1 className="text-lg font-bold tracking-tight text-ink">{tApp('name')}</h1>
           <p className="text-xs text-dim">{tApp('tagline')}</p>
         </div>
+        <Link
+          href="/vocabulaire"
+          className="flex min-h-11 items-center rounded-xl border border-line bg-surface px-3 text-sm font-semibold text-muted"
+        >
+          {tVocabulary('open')}
+        </Link>
         <Link
           href="/settings"
           aria-label={tSettings('title')}

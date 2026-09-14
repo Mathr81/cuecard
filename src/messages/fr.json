@@ -180,5 +180,35 @@
       "culturalReference": "référence culturelle",
       "wordplay": "jeu de mots"
     }
+  },
+  "vocabulary": {
+    "title": "Carnet de vocabulaire",
+    "open": "Carnet",
+    "save": "Sauvegarder",
+    "saved": "Dans le carnet",
+    "remove": "Retirer du carnet",
+    "searchPlaceholder": "Un mot, une phrase, une traduction",
+    "searchLabel": "Chercher dans le carnet",
+    "allTitles": "Tous les titres",
+    "count": "{count, plural, =0 {Aucun mot} one {# mot} other {# mots}}",
+    "noMatch": "Aucun mot ne correspond.",
+    "empty": "Le carnet est vide.",
+    "emptyHint": "Tape sur un mot dans le lecteur, puis « Sauvegarder » : il atterrit ici avec sa réplique et sa traduction.",
+    "export": "Export",
+    "exportHint": "L'export est un CSV à deux colonnes, recto et verso, prêt pour Anki. Coche « Allow HTML in fields » à l'import pour que le mot reste en gras dans la phrase.",
+    "startReview": "Réviser",
+    "review": "Révision",
+    "reveal": "Révéler",
+    "known": "Su",
+    "notKnown": "Pas su",
+    "reviewPosition": "{current} / {total}",
+    "reviewDone": "Session terminée",
+    "reviewScore": "{known} sus sur {total}",
+    "reviewHistory": "{reviews, plural, one {# révision} other {# révisions}} · {failures, plural, one {# échec} other {# échecs}}",
+    "noTranslation": "Pas de traduction enregistrée pour ce mot.",
+    "backToList": "Revenir au carnet",
+    "exportLabel": "Exporter le carnet en CSV pour Anki",
+    "unreachable": "Carnet injoignable.",
+    "unreachableHint": "Le carnet vit sur le serveur : il faut du réseau pour l'ouvrir. Le lecteur, lui, continue de marcher hors ligne."
   }
 }

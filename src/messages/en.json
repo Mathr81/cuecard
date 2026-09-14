@@ -180,5 +180,35 @@
       "culturalReference": "cultural reference",
       "wordplay": "wordplay"
     }
+  },
+  "vocabulary": {
+    "title": "Vocabulary notebook",
+    "open": "Notebook",
+    "save": "Save",
+    "saved": "In the notebook",
+    "remove": "Remove from the notebook",
+    "searchPlaceholder": "A word, a line, a translation",
+    "searchLabel": "Search the notebook",
+    "allTitles": "All titles",
+    "count": "{count, plural, =0 {No words} one {# word} other {# words}}",
+    "noMatch": "No word matches.",
+    "empty": "The notebook is empty.",
+    "emptyHint": "Tap a word in the reader, then “Save”: it lands here with its line and its translation.",
+    "export": "Export",
+    "exportHint": "The export is a two-column CSV, front and back, ready for Anki. Tick “Allow HTML in fields” on import so the word stays bold inside the line.",
+    "startReview": "Review",
+    "review": "Review",
+    "reveal": "Reveal",
+    "known": "Knew it",
+    "notKnown": "Didn't know",
+    "reviewPosition": "{current} / {total}",
+    "reviewDone": "Session finished",
+    "reviewScore": "{known} known out of {total}",
+    "reviewHistory": "{reviews, plural, one {# review} other {# reviews}} · {failures, plural, one {# miss} other {# misses}}",
+    "noTranslation": "No translation saved for this word.",
+    "backToList": "Back to the notebook",
+    "exportLabel": "Export the notebook as CSV for Anki",
+    "unreachable": "Notebook unreachable.",
+    "unreachableHint": "The notebook lives on the server, so it needs a connection. The reader keeps working offline."
   }
 }

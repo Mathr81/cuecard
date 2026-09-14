@@ -60,6 +60,32 @@ function migrate(db: Database.Database): void {
 
     CREATE INDEX IF NOT EXISTS subtitle_files_title ON subtitle_files (title_key);
 
+    -- Le carnet : un mot, la réplique d'où il vient, et ce qu'on en a compris.
+    CREATE TABLE IF NOT EXISTS vocabulary (
+      id               INTEGER PRIMARY KEY AUTOINCREMENT,
+      term             TEXT NOT NULL,
+      cue_text         TEXT NOT NULL,
+      title_key        TEXT NOT NULL,
+      title_name       TEXT NOT NULL,
+      episode_label    TEXT,
+      start_ms         INTEGER NOT NULL,
+      translation      TEXT,
+      explanation      TEXT,
+      register         TEXT,
+      kind             TEXT,
+      created_at       INTEGER NOT NULL,
+      reviews          INTEGER NOT NULL DEFAULT 0,
+      failures         INTEGER NOT NULL DEFAULT 0,
+      last_reviewed_at INTEGER
+    );
+
+    -- Le même mot, dans la même réplique du même titre, n'est qu'une entrée :
+    -- resauvegarder met à jour au lieu de doubler.
+    CREATE UNIQUE INDEX IF NOT EXISTS vocabulary_unique
+      ON vocabulary (term, title_key, start_ms);
+
+    CREATE INDEX IF NOT EXISTS vocabulary_recent ON vocabulary (created_at DESC);
+
     -- Une explication ne dépend que du mot et de son contexte : la recalculer
     -- coûterait des jetons pour un résultat identique.
     CREATE TABLE IF NOT EXISTS llm_senses (

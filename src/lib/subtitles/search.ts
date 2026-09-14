@@ -90,6 +90,25 @@ export class CueSearchIndex {
 }
 
 /**
+ * Version repliée d'un texte, caractère pour caractère : minuscules, sans
+ * accents, apostrophes normalisées. La longueur est préservée, donc un index
+ * trouvé dedans désigne aussi le texte d'origine.
+ */
+export function foldPreservingLength(text: string): string {
+  return [...text]
+    .map(
+      (char) =>
+        char
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[\u2019\u02bc]/g, "'")
+          .slice(0, 1) || char.toLowerCase()
+    )
+    .join('');
+}
+
+/**
  * Plages à surligner dans une réplique : chaque mot de la requête retrouvé
  * dans le texte d'origine, insensible à la casse et aux accents.
  */
@@ -99,15 +118,7 @@ export function highlightRanges(text: string, query: string): Array<[number, num
     .filter((w) => w.length >= 2);
   if (words.length === 0) return [];
 
-  // La normalisation ne change pas la longueur : NFD est recomposé caractère
-  // par caractère pour garder un index commun avec le texte affiché.
-  const haystack = [...text]
-    .map(
-      (char) =>
-        char.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’ʼ]/g, "'").slice(0, 1) ||
-        char.toLowerCase()
-    )
-    .join('');
+  const haystack = foldPreservingLength(text);
 
   const ranges: Array<[number, number]> = [];
   for (const word of words) {

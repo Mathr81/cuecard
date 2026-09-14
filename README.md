@@ -50,7 +50,33 @@ en cours est affiché dans les réglages.
       une bottom sheet.
 - [x] **Étape 3** — TMDB + OpenSubtitles, calibrage et mémorisation du décalage.
 - [x] **Étape 4** — sens en contexte via OpenRouter.
-- [ ] Étape 5 — carnet de vocabulaire, export Anki, PWA hors ligne.
+- [x] **Étape 5** — carnet de vocabulaire, export Anki, révision, PWA hors ligne.
+
+## Ce que fait l'étape 5
+
+**Carnet** — un bouton « Sauvegarder » en haut de la feuille de définition
+range le mot avec sa réplique complète, le titre, l'épisode, le timestamp, sa
+traduction contextuelle et son explication. Sauvegarder avant que le modèle
+n'ait répondu marche aussi : l'entrée se complète toute seule quand
+l'explication arrive. Le même mot depuis la même réplique n'est jamais
+dupliqué, et le resauvegarder n'efface pas l'historique de révision.
+
+**Page `/vocabulaire`** — recherche sur le mot, la réplique et la traduction,
+filtre par titre, groupement par titre.
+
+**Export Anki** — CSV à deux colonnes, recto et verso, sans en-tête. Le recto
+est la phrase du film avec le mot en gras — l'expression entière d'un bloc,
+pas trois mots gras séparés. Le verso porte la traduction contextuelle,
+l'explication, le registre, le type et la provenance. Échappement RFC 4180.
+
+**Révision** — une carte, la phrase du film comme contexte, révéler, marquer
+su ou pas su. L'ordre est fixé au démarrage : d'abord ce qu'on rate le plus,
+puis ce qu'on n'a pas revu depuis le plus longtemps. Pas de SM-2.
+
+**PWA** — manifeste, icônes (dont maskable), mode standalone, thème sombre.
+Le service worker met en cache la coquille de l'app et les mots de dictionnaire
+déjà consultés ; les répliques sont déjà dans IndexedDB. Résultat : perdre le
+wifi au milieu d'un film ne fait pas perdre la session.
 
 ## Ce que fait l'étape 4
 

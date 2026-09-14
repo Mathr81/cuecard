@@ -8,6 +8,7 @@ import { CueSearchResults } from '@/components/CueSearchResults';
 import type { CueSelection } from '@/components/CueText';
 import { DefinitionPanel, type Lookup } from '@/components/DefinitionPanel';
 import { sceneAround } from '@/lib/sense/context';
+import { episodeLabel } from '@/lib/titles/key';
 import { TimeSheet, type TimeSheetMode } from '@/components/TimeSheet';
 import { useOffset } from '@/hooks/useOffset';
 import { computeOffset, findCueAtTime, toCueTime } from '@/lib/subtitles/offset';
@@ -232,6 +233,14 @@ export function ReaderScreen() {
                     title: doc.title?.name ?? doc.name,
                     year: doc.title?.year ?? null,
                     genres: doc.title?.genres ?? [],
+                  },
+                  target: {
+                    term,
+                    cueText: doc.cues[currentIndex].text.replace(/\n/g, ' '),
+                    titleKey: doc.titleKey,
+                    titleName: doc.title?.name ?? doc.name,
+                    episodeLabel: doc.title ? episodeLabel(doc.title) || null : null,
+                    startMs: doc.cues[currentIndex].startMs,
                   },
                 })
               }
