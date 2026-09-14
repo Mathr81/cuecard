@@ -12,6 +12,7 @@ const episode: TitleRef = {
   season: 1,
   episode: 4,
   episodeName: 'Cancer Man',
+  genres: ['Crime'],
 };
 
 const movie: TitleRef = {

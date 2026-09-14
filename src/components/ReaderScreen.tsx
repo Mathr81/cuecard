@@ -7,6 +7,7 @@ import { CuePlayer } from '@/components/CuePlayer';
 import { CueSearchResults } from '@/components/CueSearchResults';
 import type { CueSelection } from '@/components/CueText';
 import { DefinitionPanel, type Lookup } from '@/components/DefinitionPanel';
+import { sceneAround } from '@/lib/sense/context';
 import { TimeSheet, type TimeSheetMode } from '@/components/TimeSheet';
 import { useOffset } from '@/hooks/useOffset';
 import { computeOffset, findCueAtTime, toCueTime } from '@/lib/subtitles/offset';
@@ -224,6 +225,14 @@ export function ReaderScreen() {
                   term,
                   cueIndex: currentIndex,
                   context: doc.cues[currentIndex].text.replace(/\n/g, ' '),
+                  // La scène est figée au moment du tap : l'objet reste stable
+                  // et le bloc LLM ne se relance pas à chaque rendu.
+                  scene: {
+                    ...sceneAround(doc.cues, currentIndex),
+                    title: doc.title?.name ?? doc.name,
+                    year: doc.title?.year ?? null,
+                    genres: doc.title?.genres ?? [],
+                  },
                 })
               }
             />

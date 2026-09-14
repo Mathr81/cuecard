@@ -64,11 +64,20 @@ export async function searchMulti(query: string, language: string): Promise<Tmdb
     .slice(0, 20);
 }
 
+interface TmdbGenre {
+  name?: string;
+}
+
+function genreNames(genres: TmdbGenre[] | undefined): string[] {
+  return (genres ?? []).flatMap((genre) => (genre.name ? [genre.name] : [])).slice(0, 5);
+}
+
 export interface TmdbShow {
   tmdbId: number;
   name: string;
   year: number | null;
   posterPath: string | null;
+  genres: string[];
   seasons: TmdbSeason[];
 }
 
@@ -79,6 +88,7 @@ export async function getShow(tmdbId: number, language: string): Promise<TmdbSho
     name?: string;
     first_air_date?: string;
     poster_path?: string | null;
+    genres?: TmdbGenre[];
     seasons?: Array<{
       season_number: number;
       name?: string;
@@ -92,6 +102,7 @@ export async function getShow(tmdbId: number, language: string): Promise<TmdbSho
     name: data.name ?? '',
     year: yearOf(data.first_air_date),
     posterPath: data.poster_path ?? null,
+    genres: genreNames(data.genres),
     seasons: (data.seasons ?? [])
       // La saison 0 regroupe les hors-série : jamais ce que je cherche.
       .filter((season) => season.season_number > 0 && (season.episode_count ?? 0) > 0)
@@ -104,16 +115,22 @@ export async function getShow(tmdbId: number, language: string): Promise<TmdbSho
   };
 }
 
-export async function getMovie(
-  tmdbId: number,
-  language: string
-): Promise<{ tmdbId: number; name: string; year: number | null; posterPath: string | null }> {
+export interface TmdbMovie {
+  tmdbId: number;
+  name: string;
+  year: number | null;
+  posterPath: string | null;
+  genres: string[];
+}
+
+export async function getMovie(tmdbId: number, language: string): Promise<TmdbMovie> {
   const { headers } = credentials();
   const data = await fetchJson<{
     id: number;
     title?: string;
     release_date?: string;
     poster_path?: string | null;
+    genres?: TmdbGenre[];
   }>(buildUrl(`/movie/${tmdbId}`, { language }), { headers });
 
   return {
@@ -121,6 +138,7 @@ export async function getMovie(
     name: data.title ?? '',
     year: yearOf(data.release_date),
     posterPath: data.poster_path ?? null,
+    genres: genreNames(data.genres),
   };
 }
 

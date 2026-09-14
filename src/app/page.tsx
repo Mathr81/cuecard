@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { LocaleSwitch } from '@/components/LocaleSwitch';
+import Link from 'next/link';
 import { RecentDocument } from '@/components/RecentDocument';
 import { RecentTitles } from '@/components/RecentTitles';
 import { SubtitleDropzone } from '@/components/SubtitleDropzone';
@@ -14,6 +14,7 @@ export default async function HomePage({
   const t = await getTranslations('home');
   const tApp = await getTranslations('app');
   const tTitles = await getTranslations('titles');
+  const tSettings = await getTranslations('settings');
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-xl flex-col px-4">
@@ -22,7 +23,13 @@ export default async function HomePage({
           <h1 className="text-lg font-bold tracking-tight text-ink">{tApp('name')}</h1>
           <p className="text-xs text-dim">{tApp('tagline')}</p>
         </div>
-        <LocaleSwitch />
+        <Link
+          href="/settings"
+          aria-label={tSettings('title')}
+          className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-line bg-surface text-lg text-muted"
+        >
+          ☰
+        </Link>
       </header>
 
       <main className="pb-safe flex flex-1 flex-col gap-6 py-2">

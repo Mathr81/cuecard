@@ -4,6 +4,7 @@ export const EXTERNAL_ERROR_CODES = [
   'rate_limited',
   'quota_exhausted',
   'not_found',
+  'invalid_response',
   'upstream',
   'network',
   'invalid_request',

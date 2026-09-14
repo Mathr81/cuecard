@@ -10,7 +10,7 @@ textuelle** d'une réplique, pas le timestamp.
 ## Stack
 
 Next.js (App Router) · TypeScript · Tailwind CSS v4 · next-intl (FR / EN) ·
-Fuse.js · Zustand + IndexedDB · SQLite (better-sqlite3) · zod.
+Fuse.js · Zustand + IndexedDB · SQLite (better-sqlite3) · zod · OpenRouter.
 
 ## Démarrer
 
@@ -23,8 +23,13 @@ Puis ouvrir <http://localhost:3000> et charger un fichier `.srt` ou `.vtt`.
 
 Copier `.env.example` vers `.env.local` et renseigner `TMDB_API_KEY` et
 `OPENSUBTITLES_API_KEY` pour la recherche de titres et le téléchargement des
-sous-titres. Sans clés, le chargement manuel d'un `.srt` fonctionne toujours,
-et chaque écran dit précisément quelle clé manque.
+sous-titres, `OPENROUTER_API_KEY` pour le sens en contexte. Sans clés, le
+chargement manuel d'un `.srt` et le dictionnaire fonctionnent toujours, et
+chaque écran dit précisément quelle clé manque.
+
+`OPENROUTER_MODEL` choisit le modèle ; la valeur par défaut est un point de
+départ rapide et bon marché, à changer selon ce qui est disponible. Le modèle
+en cours est affiché dans les réglages.
 
 ## Scripts
 
@@ -44,8 +49,35 @@ et chaque écran dit précisément quelle clé manque.
 - [x] **Étape 2** — tap sur un mot, sélection d'expression, dictionnaire dans
       une bottom sheet.
 - [x] **Étape 3** — TMDB + OpenSubtitles, calibrage et mémorisation du décalage.
-- [ ] Étape 4 — sens en contexte via OpenRouter.
+- [x] **Étape 4** — sens en contexte via OpenRouter.
 - [ ] Étape 5 — carnet de vocabulaire, export Anki, PWA hors ligne.
+
+## Ce que fait l'étape 4
+
+**Sens en contexte** (`/api/sense`) — le troisième bloc de la feuille, chargé
+en parallèle des deux autres : le dictionnaire s'affiche sans jamais attendre
+le modèle. On envoie le mot ou l'expression, la réplique courante repérée par
+un marqueur, quatre répliques avant et quatre après, le titre, l'année et les
+genres TMDB. La réponse est un JSON strict validé par zod :
+traduction contextuelle, explication en deux phrases, registre, type
+(idiome, phrasal verb, référence culturelle…), note culturelle si nécessaire,
+et des exemples bilingues.
+
+Une réponse presque conforme est rattrapée avant d'être refusée — « informal »
+vaut « familier », « litteral » vaut « littéral », une note vide vaut `null` —
+parce qu'une relance coûte une seconde d'attente et des jetons. Si elle reste
+hors contrat, une seule relance, puis un message clair : boucler indéfiniment
+sur un modèle qui ne s'y conforme pas ne sert à rien.
+
+**Cache** — par mot, scène, langue et modèle. Recliquer sur un mot déjà
+expliqué ne coûte rien et ne fait rien attendre.
+
+**Langue des explications** — réglage séparé de celui de l'interface, persisté
+indépendamment : app en français et explications en anglais pour un mode
+immersion totale, ou l'inverse.
+
+**Compteur de jetons** — dans les réglages : total, entrée / sortie, appels
+payés, appels servis par le cache, et depuis quand. Remise à zéro d'un bouton.
 
 ## Ce que fait l'étape 3
 

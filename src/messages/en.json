@@ -36,8 +36,20 @@
   "settings": {
     "title": "Settings",
     "uiLanguage": "Interface language",
+    "uiLanguageHelp": "The language of the app's buttons, headings and messages.",
+    "contentLanguage": "Explanation language",
+    "contentLanguageHelp": "The language of the model's translations and explanations. Set it to English for full immersion.",
     "french": "Français",
-    "english": "English"
+    "english": "English",
+    "tokens": "Tokens used",
+    "tokensHelp": "Since the last reset, on this device.",
+    "tokensBreakdown": "{prompt, number} in · {completion, number} out",
+    "tokensCalls": "Paid calls",
+    "tokensCached": "Served from cache",
+    "tokensSince": "Since",
+    "tokensReset": "Reset the counter",
+    "model": "Model",
+    "missingOpenRouterKey": "OPENROUTER_API_KEY is not set: contextual meaning will not work."
   },
   "errors": {
     "unsupportedFile": "Unrecognised format. An .srt or .vtt file is required.",
@@ -60,7 +72,8 @@
       "not_found": "{service} has nothing for this title.",
       "upstream": "{service} is answering oddly. This is not on your side.",
       "network": "No connection to {service}.",
-      "invalid_request": "The app made a request it should not have. That is a bug, not something you did."
+      "invalid_request": "The app made a request it should not have. That is a bug, not something you did.",
+      "invalid_response": "{service} answered something unusable, twice in a row. Try again, or switch model in the settings."
     }
   },
   "common": {
@@ -77,7 +90,7 @@
     "playAudio": "Play pronunciation",
     "externalLinks": "Elsewhere",
     "expressionNoEntry": "The English dictionary only indexes single words: it has no entry for an expression.",
-    "expressionHint": "WordReference below covers expressions and phrasal verbs. Contextual meaning arrives in step 4.",
+    "expressionHint": "The “meaning in context” block below is made for this, and WordReference also covers expressions and phrasal verbs.",
     "partOfSpeech": {
       "noun": "noun",
       "verb": "verb",
@@ -148,5 +161,24 @@
     "offsetOutOfRange": "An offset of {offset}: the time is most likely mistyped.",
     "offsetUnusual": "that is unusual, double-check",
     "offsetNotSaved": "Offset applied for this session but not remembered: saving failed."
+  },
+  "sense": {
+    "title": "Meaning in context",
+    "loading": "Reading the line…",
+    "culturalNote": "Cultural note",
+    "register": {
+      "familier": "informal",
+      "neutre": "neutral",
+      "soutenu": "formal",
+      "argot": "slang",
+      "vulgaire": "vulgar"
+    },
+    "kind": {
+      "literal": "literal",
+      "idiom": "idiom",
+      "phrasalVerb": "phrasal verb",
+      "culturalReference": "cultural reference",
+      "wordplay": "wordplay"
+    }
   }
 }

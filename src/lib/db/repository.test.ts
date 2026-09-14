@@ -24,6 +24,7 @@ function episode(season: number, number: number): TitleRef {
     season,
     episode: number,
     episodeName: `Episode ${number}`,
+    genres: ['Crime', 'Drame'],
   };
 }
 
@@ -36,6 +37,7 @@ const movie: TitleRef = {
   season: null,
   episode: null,
   episodeName: null,
+  genres: ['Science-Fiction'],
 };
 
 describe('titleKey', () => {
@@ -94,6 +96,7 @@ describe('history', () => {
       episode: 7,
       episodeName: 'Episode 7',
       posterPath: '/poster.jpg',
+      genres: ['Crime', 'Drame'],
     });
   });
 

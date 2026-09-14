@@ -36,8 +36,20 @@
   "settings": {
     "title": "Réglages",
     "uiLanguage": "Langue de l'interface",
+    "uiLanguageHelp": "La langue des boutons, des titres et des messages de l'app.",
+    "contentLanguage": "Langue des explications",
+    "contentLanguageHelp": "La langue des traductions et des explications du modèle. Mets l'anglais pour un mode immersion totale.",
     "french": "Français",
-    "english": "English"
+    "english": "English",
+    "tokens": "Jetons consommés",
+    "tokensHelp": "Depuis la dernière remise à zéro, sur cet appareil.",
+    "tokensBreakdown": "{prompt, number} en entrée · {completion, number} en sortie",
+    "tokensCalls": "Appels payés",
+    "tokensCached": "Servis par le cache",
+    "tokensSince": "Depuis le",
+    "tokensReset": "Remettre le compteur à zéro",
+    "model": "Modèle",
+    "missingOpenRouterKey": "OPENROUTER_API_KEY n'est pas renseignée : le sens en contexte ne fonctionnera pas."
   },
   "errors": {
     "unsupportedFile": "Format non reconnu. Il faut un fichier .srt ou .vtt.",
@@ -60,7 +72,8 @@
       "not_found": "{service} n'a rien pour ce titre.",
       "upstream": "{service} répond de travers. Ce n'est pas de ton côté.",
       "network": "Pas de connexion à {service}.",
-      "invalid_request": "Requête refusée par l'app. C'est un bug, pas une manipulation de ta part."
+      "invalid_request": "Requête refusée par l'app. C'est un bug, pas une manipulation de ta part.",
+      "invalid_response": "{service} a répondu quelque chose d'inexploitable, deux fois de suite. Réessaie, ou change de modèle dans les réglages."
     }
   },
   "common": {
@@ -77,7 +90,7 @@
     "playAudio": "Écouter la prononciation",
     "externalLinks": "Ailleurs",
     "expressionNoEntry": "Le dictionnaire anglais n'indexe que des mots seuls : il n'a pas d'entrée pour une expression.",
-    "expressionHint": "WordReference ci-dessous couvre les expressions et les phrasal verbs. Le sens en contexte arrive à l'étape 4.",
+    "expressionHint": "Le bloc « sens en contexte » ci-dessous est fait pour ça, et WordReference couvre aussi les expressions et les phrasal verbs.",
     "partOfSpeech": {
       "noun": "nom",
       "verb": "verbe",
@@ -148,5 +161,24 @@
     "offsetOutOfRange": "Décalage de {offset} : c'est sûrement le temps qui est mal tapé.",
     "offsetUnusual": "c'est inhabituel, vérifie",
     "offsetNotSaved": "Décalage appliqué pour cette session, mais pas mémorisé : l'enregistrement a échoué."
+  },
+  "sense": {
+    "title": "Sens en contexte",
+    "loading": "Analyse de la réplique…",
+    "culturalNote": "Note culturelle",
+    "register": {
+      "familier": "familier",
+      "neutre": "neutre",
+      "soutenu": "soutenu",
+      "argot": "argot",
+      "vulgaire": "vulgaire"
+    },
+    "kind": {
+      "literal": "littéral",
+      "idiom": "idiome",
+      "phrasalVerb": "phrasal verb",
+      "culturalReference": "référence culturelle",
+      "wordplay": "jeu de mots"
+    }
   }
 }

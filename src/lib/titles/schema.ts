@@ -9,4 +9,5 @@ export const titleRefSchema = z.object({
   season: z.number().int().nonnegative().nullable(),
   episode: z.number().int().nonnegative().nullable(),
   episodeName: z.string().max(300).nullable(),
+  genres: z.array(z.string().max(60)).max(10).default([]),
 });

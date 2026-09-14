@@ -39,6 +39,7 @@ function migrate(db: Database.Database): void {
       season         INTEGER,
       episode        INTEGER,
       episode_name   TEXT,
+      genres         TEXT NOT NULL DEFAULT '[]',
       last_opened_at INTEGER NOT NULL
     );
 
@@ -58,6 +59,17 @@ function migrate(db: Database.Database): void {
     );
 
     CREATE INDEX IF NOT EXISTS subtitle_files_title ON subtitle_files (title_key);
+
+    -- Une explication ne dépend que du mot et de son contexte : la recalculer
+    -- coûterait des jetons pour un résultat identique.
+    CREATE TABLE IF NOT EXISTS llm_senses (
+      cache_key  TEXT PRIMARY KEY,
+      term       TEXT NOT NULL,
+      language   TEXT NOT NULL,
+      model      TEXT NOT NULL,
+      payload    TEXT NOT NULL,
+      created_at INTEGER NOT NULL
+    );
 
     -- Le décalage dépend du couple (titre, source) : deux versions de
     -- sous-titres du même épisode n'ont pas le même retard.

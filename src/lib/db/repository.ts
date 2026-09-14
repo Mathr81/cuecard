@@ -16,7 +16,20 @@ interface TitleRow {
   season: number | null;
   episode: number | null;
   episode_name: string | null;
+  genres: string;
   last_opened_at: number;
+}
+
+function parseGenres(raw: string | null): string[] {
+  if (!raw) return [];
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed)
+      ? parsed.filter((item): item is string => typeof item === 'string')
+      : [];
+  } catch {
+    return [];
+  }
 }
 
 function toRecentTitle(row: TitleRow): RecentTitle {
@@ -29,6 +42,7 @@ function toRecentTitle(row: TitleRow): RecentTitle {
     season: row.season,
     episode: row.episode,
     episodeName: row.episode_name,
+    genres: parseGenres(row.genres),
     lastOpenedAt: row.last_opened_at,
   };
 }
@@ -38,16 +52,29 @@ export function rememberTitle(ref: TitleRef, db: Database = getDatabase()): void
   // même milliseconde s'ordonneraient sinon au hasard, et le nettoyage
   // ci-dessous pourrait supprimer celui qu'on vient d'insérer.
   db.prepare(
-    `INSERT INTO titles (key, media_type, tmdb_id, name, year, poster_path, season, episode, episode_name, last_opened_at)
-     VALUES (@key, @mediaType, @tmdbId, @name, @year, @posterPath, @season, @episode, @episodeName,
+    `INSERT INTO titles (key, media_type, tmdb_id, name, year, poster_path, season, episode, episode_name, genres, last_opened_at)
+     VALUES (@key, @mediaType, @tmdbId, @name, @year, @posterPath, @season, @episode, @episodeName, @genres,
              MAX(@now, IFNULL((SELECT MAX(last_opened_at) FROM titles), 0) + 1))
      ON CONFLICT(key) DO UPDATE SET
        name = excluded.name,
        year = excluded.year,
        poster_path = excluded.poster_path,
        episode_name = excluded.episode_name,
+       genres = excluded.genres,
        last_opened_at = excluded.last_opened_at`
-  ).run({ ...ref, key: titleKey(ref), now: Date.now() });
+  ).run({
+    key: titleKey(ref),
+    mediaType: ref.mediaType,
+    tmdbId: ref.tmdbId,
+    name: ref.name,
+    year: ref.year,
+    posterPath: ref.posterPath,
+    season: ref.season,
+    episode: ref.episode,
+    episodeName: ref.episodeName,
+    genres: JSON.stringify(ref.genres),
+    now: Date.now(),
+  });
 
   // L'historique se taille tout seul plutôt que de grandir indéfiniment.
   db.prepare(
@@ -109,6 +136,36 @@ export function cacheSubtitleFile(file: CachedSubtitleFile, db: Database = getDa
        cue_count = excluded.cue_count,
        fetched_at = excluded.fetched_at`
   ).run(file);
+}
+
+export function cachedSense(cacheKey: string, db: Database = getDatabase()): unknown | null {
+  const row = db.prepare(`SELECT payload FROM llm_senses WHERE cache_key = ?`).get(cacheKey) as
+    { payload: string } | undefined;
+  if (!row) return null;
+
+  try {
+    return JSON.parse(row.payload);
+  } catch {
+    return null;
+  }
+}
+
+export function cacheSense(
+  entry: { cacheKey: string; term: string; language: string; model: string; payload: unknown },
+  db: Database = getDatabase()
+): void {
+  db.prepare(
+    `INSERT INTO llm_senses (cache_key, term, language, model, payload, created_at)
+     VALUES (@cacheKey, @term, @language, @model, @payload, @createdAt)
+     ON CONFLICT(cache_key) DO UPDATE SET payload = excluded.payload`
+  ).run({
+    cacheKey: entry.cacheKey,
+    term: entry.term,
+    language: entry.language,
+    model: entry.model,
+    payload: JSON.stringify(entry.payload),
+    createdAt: Date.now(),
+  });
 }
 
 export function readOffset(

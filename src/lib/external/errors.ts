@@ -4,6 +4,7 @@ export type ExternalErrorCode =
   | 'rate_limited'
   | 'quota_exhausted'
   | 'not_found'
+  | 'invalid_response'
   | 'upstream'
   | 'network';
 
@@ -43,6 +44,8 @@ export function statusForCode(code: ExternalErrorCode): number {
       return 402;
     case 'not_found':
       return 404;
+    case 'invalid_response':
+      return 502;
     default:
       return 502;
   }

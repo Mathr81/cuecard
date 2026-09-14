@@ -10,6 +10,8 @@ export interface TitleRef {
   season: number | null;
   episode: number | null;
   episodeName: string | null;
+  /** Genres TMDB : « Crime, Drama » ne se traduit pas comme « Comedy ». */
+  genres: string[];
 }
 
 export interface RecentTitle extends TitleRef {
