@@ -24,7 +24,7 @@ export const senseSchema = z.object({
 
 export type ContextualSense = z.infer<typeof senseSchema>;
 
-function plain(value: string): string {
+export function plain(value: string): string {
   return value
     .toLowerCase()
     .normalize('NFD')
@@ -71,7 +71,7 @@ const TYPE_ALIASES: Record<string, (typeof SENSE_TYPES)[number]> = {
   'play on words': 'jeu de mots',
 };
 
-function alias<T extends string>(value: unknown, table: Record<string, T>): unknown {
+export function alias<T extends string>(value: unknown, table: Record<string, T>): unknown {
   return typeof value === 'string' ? (table[plain(value)] ?? value) : value;
 }
 

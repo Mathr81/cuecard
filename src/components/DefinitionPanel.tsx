@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { BottomSheet } from '@/components/BottomSheet';
 import { ContextualSenseBlock, type SenseContext } from '@/components/ContextualSenseBlock';
 import { DictionaryBlock } from '@/components/DictionaryBlock';
+import { WordEntryBlock } from '@/components/WordEntryBlock';
 import { ExternalLinksBlock } from '@/components/ExternalLinksBlock';
 import { SaveToNotebook, type SaveTarget } from '@/components/SaveToNotebook';
 import type { ContextualSense } from '@/lib/sense/schema';
@@ -69,6 +70,7 @@ function PanelBody({
       <SaveToNotebook target={lookup.target} sense={sense} />
       <div className="mt-5 flex flex-col">
         <ContextualSenseBlock term={lookup.term} context={lookup.scene} onSense={onSense} />
+        <WordEntryBlock term={lookup.term} />
         <DictionaryBlock term={lookup.term} isExpression={isExpression} />
         <ExternalLinksBlock term={lookup.term} />
       </div>

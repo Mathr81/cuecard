@@ -187,9 +187,8 @@ wifi au milieu d'un film ne fait pas perdre la session.
 
 ## Ce que fait l'étape 4
 
-**Sens en contexte** (`/api/sense`) — le troisième bloc de la feuille, chargé
-en parallèle des deux autres : le dictionnaire s'affiche sans jamais attendre
-le modèle. On envoie le mot ou l'expression, la réplique courante repérée par
+**Sens en contexte** (`/api/sense`) — le premier bloc de la feuille, chargé en
+parallèle des autres : chacun s'affiche sans attendre les voisins. On envoie le mot ou l'expression, la réplique courante repérée par
 un marqueur, quatre répliques avant et quatre après, le titre, l'année et les
 genres TMDB. La réponse est un JSON strict validé par zod :
 traduction contextuelle, explication en deux phrases, registre, type
@@ -202,8 +201,21 @@ parce qu'une relance coûte une seconde d'attente et des jetons. Si elle reste
 hors contrat, une seule relance, puis un message clair : boucler indéfiniment
 sur un modèle qui ne s'y conforme pas ne sert à rien.
 
-**Cache** — par mot, scène, langue et modèle. Recliquer sur un mot déjà
-expliqué ne coûte rien et ne fait rien attendre.
+**Traduction** (`/api/entry/[word]`) — l'entrée bilingue générale : ce que le
+mot veut dire en soi, pas dans la réplique où on vient de taper dessus. C'est
+celle qu'on révise et celle qui part sur une carte. Même contrat JSON strict :
+jusqu'à six sens classés par fréquence à l'oral, un à quatre équivalents
+français par sens, la nature grammaticale, le registre, une précision qui
+distingue deux sens voisins, un exemple bilingue, les expressions figées bâties
+sur le mot, et un avertissement quand il y a un vrai faux-ami.
+
+Elle ne dépend d'aucune scène, donc elle est **payée une seule fois pour
+toutes** : le cache tient dans la base, partagé par tous les appareils et
+conservé au redémarrage.
+
+**Cache** — le sens en contexte par mot, scène, langue et modèle ; la
+traduction générale par mot, langue et modèle. Recliquer sur un mot déjà
+consulté ne coûte rien et ne fait rien attendre.
 
 **Langue des explications** — réglage séparé de celui de l'interface, persisté
 indépendamment : app en français et explications en anglais pour un mode

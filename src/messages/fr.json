@@ -122,8 +122,17 @@
       "contraction": "contraction",
       "name": "nom propre",
       "proverb": "proverbe",
-      "symbol": "symbole"
+      "symbol": "symbole",
+      "phrasalVerb": "verbe à particule"
     }
+  },
+  "entry": {
+    "title": "Traduction",
+    "loading": "Recherche des traductions…",
+    "expressions": "Expressions courantes",
+    "trap": "Piège",
+    "showMore": "{count, plural, one {+ # autre sens} other {+ # autres sens}}",
+    "showLess": "Réduire"
   },
   "titles": {
     "searchPlaceholder": "Titre du film ou de la série",

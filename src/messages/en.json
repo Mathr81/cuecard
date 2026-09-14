@@ -122,8 +122,17 @@
       "contraction": "contraction",
       "name": "proper noun",
       "proverb": "proverb",
-      "symbol": "symbol"
+      "symbol": "symbol",
+      "phrasalVerb": "phrasal verb"
     }
+  },
+  "entry": {
+    "title": "Translation",
+    "loading": "Looking up translations…",
+    "expressions": "Common expressions",
+    "trap": "Watch out",
+    "showMore": "{count, plural, one {+ # more sense} other {+ # more senses}}",
+    "showLess": "Show less"
   },
   "titles": {
     "searchPlaceholder": "Film or series title",

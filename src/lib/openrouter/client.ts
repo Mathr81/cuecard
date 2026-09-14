@@ -1,8 +1,11 @@
 import 'server-only';
+import type { z } from 'zod';
 import { envOr } from '@/lib/env';
 import { ExternalApiError } from '@/lib/external/errors';
 import { fetchJson } from '@/lib/external/fetchJson';
 import { buildMessages, type ChatMessage, type SenseRequest } from '@/lib/sense/prompt';
+import { buildEntryMessages, type WordEntryRequest } from '@/lib/sense/entryPrompt';
+import { normalizeEntryCandidate, wordEntrySchema, type WordEntry } from '@/lib/sense/entry';
 import type { TokenUsage } from './types';
 import {
   extractJsonObject,
@@ -26,6 +29,13 @@ export interface SenseResult {
   usage: TokenUsage;
   model: string;
   /** 1 en temps normal, 2 quand la première réponse était hors contrat. */
+  attempts: number;
+}
+
+export interface WordEntryResult {
+  entry: WordEntry;
+  usage: TokenUsage;
+  model: string;
   attempts: number;
 }
 
@@ -86,13 +96,21 @@ async function complete(
   };
 }
 
-function parse(content: string): { sense: ContextualSense } | { error: string } {
+/** Une réponse conforme, ou la raison précise du refus — celle qu'on renvoie
+ *  au modèle pour sa seule relance. */
+type Parsed<T> = { value: T } | { error: string };
+
+function parseWith<T>(
+  content: string,
+  normalize: (value: unknown) => unknown,
+  schema: z.ZodType<T>
+): Parsed<T> {
   const candidate = extractJsonObject(content);
   if (candidate === null) return { error: 'the response was not a JSON object' };
 
-  const parsed = senseSchema.safeParse(normalizeSenseCandidate(candidate));
+  const parsed = schema.safeParse(normalize(candidate));
   return parsed.success
-    ? { sense: parsed.data }
+    ? { value: parsed.data }
     : {
         error: parsed.error.issues
           .map((issue) => `${issue.path.join('.')}: ${issue.message}`)
@@ -109,18 +127,20 @@ function sum(a: TokenUsage, b: TokenUsage): TokenUsage {
 }
 
 /**
- * Demande le sens en contexte. Une seule relance si la réponse ne respecte
- * pas le contrat : au-delà, le modèle ne s'y conformera pas et l'attente
- * devient plus coûteuse que l'absence de réponse.
+ * Un aller-retour, avec une seule relance si la réponse ne respecte pas le
+ * contrat : au-delà, le modèle ne s'y conformera pas et l'attente devient plus
+ * coûteuse que l'absence de réponse.
  */
-export async function requestSense(request: SenseRequest): Promise<SenseResult> {
+async function requestJson<T>(
+  messages: ChatMessage[],
+  parse: (content: string) => Parsed<T>
+): Promise<{ value: T; usage: TokenUsage; model: string; attempts: number }> {
   const model = senseModel();
-  const messages = buildMessages(request);
 
   const first = await complete(messages, model);
   const parsed = parse(first.content);
-  if ('sense' in parsed) {
-    return { sense: parsed.sense, usage: first.usage, model: first.model, attempts: 1 };
+  if ('value' in parsed) {
+    return { value: parsed.value, usage: first.usage, model: first.model, attempts: 1 };
   }
 
   const retry = await complete(
@@ -136,9 +156,25 @@ export async function requestSense(request: SenseRequest): Promise<SenseResult> 
 
   const second = parse(retry.content);
   const usage = sum(first.usage, retry.usage);
-  if ('sense' in second) {
-    return { sense: second.sense, usage, model: retry.model, attempts: 2 };
+  if ('value' in second) {
+    return { value: second.value, usage, model: retry.model, attempts: 2 };
   }
 
   throw new ExternalApiError('invalid_response', second.error);
+}
+
+/** Le sens de l'expression dans cette scène-là. */
+export async function requestSense(request: SenseRequest): Promise<SenseResult> {
+  const { value, ...rest } = await requestJson(buildMessages(request), (content) =>
+    parseWith(content, normalizeSenseCandidate, senseSchema)
+  );
+  return { sense: value, ...rest };
+}
+
+/** L'entrée bilingue générale du mot, celle qui s'apprend. */
+export async function requestWordEntry(request: WordEntryRequest): Promise<WordEntryResult> {
+  const { value, ...rest } = await requestJson(buildEntryMessages(request), (content) =>
+    parseWith(content, normalizeEntryCandidate, wordEntrySchema)
+  );
+  return { entry: value, ...rest };
 }
