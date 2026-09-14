@@ -1,3 +1,12 @@
+/**
+ * Les entités HTML qu'on rencontre dans les fichiers de sous-titres.
+ *
+ * `mdash` et `ndash` rendent bien un tiret cadratin et un tiret demi-cadratin :
+ * ce sont les seuls de tout le dépôt, et ils y restent. La charte typographique
+ * de l'app interdit ces tirets dans ce que l'app écrit elle-même, pas dans ce
+ * que le film dit. Un dialogue sous-titré s'ouvre sur un tiret ; le réécrire
+ * abîmerait le texte qu'on est précisément en train de lire.
+ */
 const ENTITIES: Record<string, string> = {
   amp: '&',
   lt: '<',

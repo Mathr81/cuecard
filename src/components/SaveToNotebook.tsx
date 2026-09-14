@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { BookmarkSimple, ICON } from '@/components/icons';
 import { apiGet, apiSend } from '@/lib/api/client';
 import type { ContextualSense } from '@/lib/sense/schema';
 import type { VocabularyEntry } from '@/lib/vocabulary/types';
@@ -28,6 +29,15 @@ function payload(target: SaveTarget, sense: ContextualSense | null) {
 /** `undefined` : on ne sait pas encore. `null` : pas dans le carnet. */
 type Known = VocabularyEntry | null | undefined;
 
+/**
+ * Le marque-page de la feuille, posé dans l'en-tête à côté de la croix.
+ *
+ * Il y était un bouton pleine largeur, entre le mot et sa traduction : l'action
+ * passait avant la réponse et poussait celle-ci sous la ligne de flottaison.
+ * En icône, il reste à portée de pouce, toujours au même endroit, et rempli
+ * d'ambre quand le mot est au carnet. Le libellé n'a pas disparu, il est dans
+ * l'`aria-label` : « Sauvegarder », puis « Retirer du carnet ».
+ */
 export function SaveToNotebook({
   target,
   sense,
@@ -97,39 +107,27 @@ export function SaveToNotebook({
     setBusy(false);
   }
 
+  // Tant que la réponse du carnet n'est pas là, la place est tenue mais rien
+  // ne clignote : un marque-page qui se remplit tout seul ferait croire à un
+  // enregistrement qu'on n'a pas demandé.
   if (entry === undefined) {
-    return <div className="mt-1 h-11 animate-pulse rounded-xl bg-surface-high" />;
+    return <div className="size-11 shrink-0" aria-hidden />;
   }
 
-  if (entry === null) {
-    return (
-      <button
-        type="button"
-        onClick={() => void save()}
-        disabled={busy}
-        className="mt-1 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-line bg-surface-high text-sm font-semibold text-ink disabled:opacity-50"
-      >
-        <span aria-hidden>☆</span>
-        {t('save')}
-      </button>
-    );
-  }
+  const saved = entry !== null;
 
   return (
-    <div className="mt-1 flex items-stretch gap-2">
-      <span className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-accent/40 bg-accent/15 text-sm font-semibold text-accent">
-        <span aria-hidden>★</span>
-        {t('saved')}
-      </span>
-      <button
-        type="button"
-        onClick={() => void forget(entry.id)}
-        disabled={busy}
-        aria-label={t('remove')}
-        className="min-h-11 w-12 shrink-0 rounded-xl border border-line bg-surface-high text-lg text-muted disabled:opacity-50"
-      >
-        ×
-      </button>
-    </div>
+    <button
+      type="button"
+      onClick={() => void (saved ? forget(entry.id) : save())}
+      disabled={busy}
+      aria-pressed={saved}
+      aria-label={saved ? t('remove') : t('save')}
+      className={`press flex size-11 shrink-0 items-center justify-center rounded-xl disabled:opacity-50 ${
+        saved ? 'text-accent' : 'text-muted'
+      }`}
+    >
+      <BookmarkSimple size={ICON} weight={saved ? 'fill' : 'bold'} aria-hidden />
+    </button>
   );
 }

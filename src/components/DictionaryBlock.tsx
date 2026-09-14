@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { AudioButton } from '@/components/AudioButton';
+import { MoreButton, PanelSection, RetryButton, Skeleton } from '@/components/panel';
 import { DictionaryLookupError, lookupWord } from '@/lib/dictionary/client';
 import type {
   DictionaryEntry,
@@ -74,14 +75,9 @@ export function DictionaryBlock({ term, isExpression }: { term: string; isExpres
 
   if (state.status === 'loading') {
     return (
-      <Block title={t('dictionary')}>
-        <div className="flex flex-col gap-2" aria-live="polite" aria-busy="true">
-          <span className="sr-only">{t('dictionaryLoading')}</span>
-          <div className="h-4 w-24 animate-pulse rounded bg-surface-high" />
-          <div className="h-4 w-full animate-pulse rounded bg-surface-high" />
-          <div className="h-4 w-4/5 animate-pulse rounded bg-surface-high" />
-        </div>
-      </Block>
+      <PanelSection label={t('dictionary')}>
+        <Skeleton label={t('dictionaryLoading')} widths={['w-24', 'w-full', 'w-4/5']} />
+      </PanelSection>
     );
   }
 
@@ -93,7 +89,7 @@ export function DictionaryBlock({ term, isExpression }: { term: string; isExpres
     const missingHint = isExpression ? t('expressionHint') : tErrors('dictionaryNotFoundHint');
 
     return (
-      <Block title={t('dictionary')}>
+      <PanelSection label={t('dictionary')}>
         <p className="text-sm leading-relaxed text-muted">
           {isMissing
             ? missingMessage
@@ -102,16 +98,8 @@ export function DictionaryBlock({ term, isExpression }: { term: string; isExpres
         <p className="mt-2 text-sm leading-relaxed text-dim">
           {isMissing ? missingHint : tErrors('dictionaryRetryHint')}
         </p>
-        {!isMissing ? (
-          <button
-            type="button"
-            onClick={retry}
-            className="mt-3 min-h-11 rounded-xl border border-line bg-surface-high px-4 text-sm font-semibold text-ink"
-          >
-            {tErrors('retry')}
-          </button>
-        ) : null}
-      </Block>
+        {!isMissing ? <RetryButton label={tErrors('retry')} onClick={retry} /> : null}
+      </PanelSection>
     );
   }
 
@@ -119,28 +107,30 @@ export function DictionaryBlock({ term, isExpression }: { term: string; isExpres
   const matchedOtherForm = entry.word.toLowerCase() !== term.toLowerCase();
 
   return (
-    <Block title={t('dictionary')}>
-      <div className="flex flex-wrap items-center gap-3">
-        {entry.phonetic ? (
-          <span className="font-mono text-base text-accent">{entry.phonetic}</span>
-        ) : null}
-        {entry.audio ? (
-          <AudioButton key={entry.audio.url} url={entry.audio.url} accent={entry.audio.accent} />
-        ) : null}
-      </div>
-
-      {matchedOtherForm ? (
-        <p className="mt-2 text-xs text-dim">{t('matchedForm', { word: entry.word })}</p>
+    <PanelSection label={t('dictionary')}>
+      {entry.phonetic || entry.audio ? (
+        <div className="mb-4 flex flex-wrap items-center gap-3">
+          {entry.phonetic ? (
+            <span className="font-mono text-base text-muted">{entry.phonetic}</span>
+          ) : null}
+          {entry.audio ? (
+            <AudioButton key={entry.audio.url} url={entry.audio.url} accent={entry.audio.accent} />
+          ) : null}
+        </div>
       ) : null}
 
-      <div className="mt-4 flex flex-col gap-5">
+      {matchedOtherForm ? (
+        <p className="mb-3 text-[0.8125rem] text-dim">{t('matchedForm', { word: entry.word })}</p>
+      ) : null}
+
+      <div className="flex flex-col gap-6">
         {entry.meanings.map((meaning) => (
           <MeaningSection key={meaning.partOfSpeech} meaning={meaning} />
         ))}
       </div>
 
       <SourceNote source={entry.source} />
-    </Block>
+    </PanelSection>
   );
 }
 
@@ -152,7 +142,7 @@ function SourceNote({ source }: { source: DictionarySource }) {
   const label = source.license ? `${name} · ${source.license}` : name;
 
   return (
-    <p className="mt-5 border-t border-line pt-3 text-xs text-dim">
+    <p className="mt-6 border-t border-line pt-3 text-xs leading-relaxed text-dim">
       {t('sourceLabel')}{' '}
       {source.url ? (
         <a
@@ -183,23 +173,23 @@ function MeaningSection({ meaning }: { meaning: DictionaryMeaning }) {
 
   return (
     <section>
-      <h4 className="mb-2 inline-flex rounded-full bg-surface-high px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-accent">
-        {label}
-      </h4>
+      {/* La nature grammaticale est une étiquette de rangement, pas un titre :
+          elle se lit comme le reste et ne porte pas de fond. */}
+      <h4 className="mb-2.5 text-[0.8125rem] text-dim">{label}</h4>
 
-      <ol className="flex list-none flex-col gap-3">
+      <ol className="flex list-none flex-col gap-3.5">
         {shown.map((definition, index) => (
-          <li key={definition.text} className="flex gap-2.5">
-            <span className="mt-0.5 font-mono text-xs text-dim">{index + 1}</span>
+          <li key={definition.text} className="flex gap-3">
+            <span className="mt-1 font-mono text-xs tabular-nums text-dim">{index + 1}</span>
             <div className="min-w-0 flex-1">
-              <p className="text-[0.95rem] leading-relaxed text-ink">{definition.text}</p>
+              <p className="text-[0.9375rem] leading-relaxed text-ink">{definition.text}</p>
               {definition.example ? (
-                <p className="mt-1 border-l-2 border-line pl-2.5 text-sm italic leading-relaxed text-muted">
+                <p className="mt-1.5 border-l border-line pl-3 text-sm leading-relaxed text-muted">
                   {definition.example}
                 </p>
               ) : null}
               {definition.synonyms.length > 0 ? (
-                <p className="mt-1.5 text-xs text-dim">
+                <p className="mt-1.5 text-[0.8125rem] text-dim">
                   {t('synonyms')} : {definition.synonyms.join(', ')}
                 </p>
               ) : null}
@@ -209,23 +199,11 @@ function MeaningSection({ meaning }: { meaning: DictionaryMeaning }) {
       </ol>
 
       {hidden > 0 ? (
-        <button
-          type="button"
+        <MoreButton
+          label={expanded ? t('showLess') : t('showMore', { count: hidden })}
           onClick={() => setExpanded((value) => !value)}
-          className="mt-2 min-h-11 text-sm font-medium text-accent"
-        >
-          {expanded ? t('showLess') : t('showMore', { count: hidden })}
-        </button>
+        />
       ) : null}
-    </section>
-  );
-}
-
-function Block({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section>
-      <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-dim">{title}</h3>
-      {children}
     </section>
   );
 }

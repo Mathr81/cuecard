@@ -96,7 +96,7 @@ async function complete(
   };
 }
 
-/** Une réponse conforme, ou la raison précise du refus — celle qu'on renvoie
+/** Une réponse conforme, ou la raison précise du refus, celle qu'on renvoie
  *  au modèle pour sa seule relance. */
 type Parsed<T> = { value: T } | { error: string };
 

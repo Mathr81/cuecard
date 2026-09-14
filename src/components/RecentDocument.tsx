@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useFormatter, useTranslations } from 'next-intl';
+import { ICON, X, iconProps } from '@/components/icons';
 import { useSubtitleStore } from '@/store/subtitles';
 
 /**
@@ -18,13 +19,13 @@ export function RecentDocument() {
   if (!hydrated || !doc || doc.source !== 'upload') return null;
 
   return (
-    <div className="flex items-stretch gap-2">
+    <div className="flex items-center gap-1">
       <Link
         href="/reader"
-        className="flex min-h-20 min-w-0 flex-1 flex-col justify-center rounded-2xl border border-line bg-surface px-4 py-3"
+        className="press flex min-h-20 min-w-0 flex-1 flex-col justify-center rounded-xl bg-surface px-4 py-3"
       >
         <span className="truncate text-base font-semibold text-ink">{doc.name}</span>
-        <span className="truncate text-sm text-muted">
+        <span className="mt-1 truncate text-sm text-dim">
           {t('cuesCount', { count: doc.cues.length })} ·{' '}
           {t('openedAt', { date: format.dateTime(doc.loadedAt, { dateStyle: 'short' }) })}
         </span>
@@ -33,9 +34,9 @@ export function RecentDocument() {
         type="button"
         onClick={clearDocument}
         aria-label={t('remove')}
-        className="w-12 shrink-0 rounded-2xl border border-line bg-surface text-xl text-muted"
+        className="press flex size-11 shrink-0 items-center justify-center rounded-xl text-dim"
       >
-        ×
+        <X size={ICON} {...iconProps} />
       </button>
     </div>
   );

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { HighlightedText } from '@/components/HighlightedText';
+import { ICON, X, iconProps } from '@/components/icons';
 import { apiGet, apiSend } from '@/lib/api/client';
 import { formatTimestamp } from '@/lib/time';
 import type { VocabularyEntry } from '@/lib/vocabulary/types';
@@ -63,22 +64,22 @@ export function VocabularyList() {
 
   if (unreachable) {
     return (
-      <div className="rounded-2xl border border-line bg-surface px-4 py-6 text-center">
-        <p className="text-base font-semibold text-ink">{t('unreachable')}</p>
-        <p className="mt-1 text-sm leading-relaxed text-muted">{t('unreachableHint')}</p>
+      <div className="rounded-2xl bg-surface px-5 py-8 text-center">
+        <p className="text-lg font-semibold tracking-tight text-ink">{t('unreachable')}</p>
+        <p className="mt-2 text-sm leading-relaxed text-muted">{t('unreachableHint')}</p>
       </div>
     );
   }
 
   if (entries === null) {
-    return <div className="h-24 animate-pulse rounded-2xl bg-surface" />;
+    return <div className="h-24 animate-pulse rounded-xl bg-surface" />;
   }
 
   if (entries.length === 0) {
     return (
-      <div className="rounded-2xl border border-line bg-surface px-4 py-6 text-center">
-        <p className="text-base font-semibold text-ink">{t('empty')}</p>
-        <p className="mt-1 text-sm leading-relaxed text-muted">{t('emptyHint')}</p>
+      <div className="rounded-2xl bg-surface px-5 py-8 text-center">
+        <p className="text-lg font-semibold tracking-tight text-ink">{t('empty')}</p>
+        <p className="mt-2 text-sm leading-relaxed text-muted">{t('emptyHint')}</p>
       </div>
     );
   }
@@ -93,7 +94,7 @@ export function VocabularyList() {
         aria-label={t('searchLabel')}
         autoCapitalize="none"
         autoCorrect="off"
-        className="h-12 w-full rounded-2xl border border-line bg-surface px-4 text-base text-ink placeholder:text-dim focus:border-accent focus:outline-none"
+        className="h-12 w-full rounded-xl bg-surface px-4 text-base text-ink placeholder:text-dim"
       />
 
       {titles.length > 1 ? (
@@ -110,39 +111,37 @@ export function VocabularyList() {
       ) : null}
 
       <div className="flex items-center justify-between gap-3">
-        <p className="text-sm text-dim">{t('count', { count: visible.length })}</p>
+        <p className="text-[0.8125rem] text-dim">{t('count', { count: visible.length })}</p>
         <Link
           href="/vocabulaire/revision"
-          className="flex min-h-11 items-center rounded-xl bg-accent px-4 text-sm font-semibold text-accent-ink"
+          className="press flex min-h-11 items-center rounded-xl bg-accent px-4 text-sm font-semibold text-accent-ink"
         >
           {t('startReview')}
         </Link>
       </div>
 
       {visible.length === 0 ? (
-        <p className="px-1 text-sm text-muted">{t('noMatch')}</p>
+        <p className="text-sm text-muted">{t('noMatch')}</p>
       ) : (
         groups.map((group) => (
           <section key={group[0].titleKey} className="flex flex-col gap-2">
-            <h2 className="px-1 text-xs font-semibold uppercase tracking-wide text-dim">
-              {group[0].titleName}
-            </h2>
+            <h2 className="text-[0.8125rem] text-dim">{group[0].titleName}</h2>
             <ul className="flex flex-col gap-2">
               {group.map((entry) => (
-                <li key={entry.id} className="flex items-stretch gap-2">
-                  <article className="min-w-0 flex-1 rounded-2xl border border-line bg-surface px-4 py-3">
+                <li key={entry.id} className="flex items-center gap-1">
+                  <article className="min-w-0 flex-1 rounded-xl bg-surface px-4 py-3.5">
                     <div className="flex items-baseline gap-2">
                       <h3 className="truncate text-base font-semibold text-ink">{entry.term}</h3>
-                      <span className="shrink-0 font-mono text-xs text-dim">
+                      <span className="ml-auto shrink-0 font-mono text-xs tabular-nums text-dim">
                         {[entry.episodeLabel, formatTimestamp(entry.startMs)]
                           .filter(Boolean)
                           .join(' · ')}
                       </span>
                     </div>
                     {entry.translation ? (
-                      <p className="mt-0.5 text-sm text-accent">{entry.translation}</p>
+                      <p className="mt-1 text-sm font-medium text-accent">{entry.translation}</p>
                     ) : null}
-                    <p className="mt-1 text-sm leading-relaxed text-muted">
+                    <p className="mt-1.5 text-sm leading-relaxed text-dim">
                       <HighlightedText text={entry.cueText} query={entry.term} />
                     </p>
                   </article>
@@ -150,9 +149,9 @@ export function VocabularyList() {
                     type="button"
                     onClick={() => void forget(entry.id)}
                     aria-label={t('remove')}
-                    className="w-12 shrink-0 rounded-2xl border border-line bg-surface text-xl text-muted"
+                    className="press flex size-11 shrink-0 items-center justify-center rounded-xl text-dim"
                   >
-                    ×
+                    <X size={ICON} {...iconProps} />
                   </button>
                 </li>
               ))}
@@ -178,8 +177,8 @@ function FilterChip({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`min-h-11 shrink-0 whitespace-nowrap rounded-full border px-4 text-sm font-medium ${
-        active ? 'border-accent bg-accent/15 text-accent' : 'border-line bg-surface text-muted'
+      className={`press min-h-11 shrink-0 whitespace-nowrap rounded-full px-4 text-sm font-medium ${
+        active ? 'bg-accent/15 text-accent' : 'bg-surface text-muted'
       }`}
     >
       {children}

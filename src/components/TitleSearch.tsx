@@ -73,11 +73,11 @@ export function TitleSearch() {
         autoCapitalize="none"
         autoCorrect="off"
         spellCheck={false}
-        className="h-14 w-full rounded-2xl border border-line bg-surface px-4 text-base text-ink placeholder:text-dim focus:border-accent focus:outline-none"
+        className="h-14 w-full rounded-xl bg-surface px-4 text-base text-ink placeholder:text-dim"
       />
 
       {searchable && (current === null || current.status === 'loading') ? (
-        <p className="px-1 text-sm text-dim" aria-live="polite">
+        <p className="text-sm text-dim" aria-live="polite">
           {t('searching')}
         </p>
       ) : null}
@@ -94,7 +94,7 @@ export function TitleSearch() {
       ) : null}
 
       {current?.status === 'ready' && current.results.length === 0 ? (
-        <div className="px-1">
+        <div>
           <p className="text-sm text-muted">{t('noResults')}</p>
           <p className="mt-1 text-sm text-dim">{t('noResultsHint')}</p>
         </div>
@@ -106,14 +106,14 @@ export function TitleSearch() {
             <li key={`${result.mediaType}-${result.tmdbId}`}>
               <Link
                 href={`/title/${result.mediaType}/${result.tmdbId}`}
-                className="flex min-h-20 items-center gap-3 rounded-2xl border border-line bg-surface p-2 pr-4 active:bg-surface-high"
+                className="press flex min-h-20 items-center gap-3 rounded-xl bg-surface p-2 pr-4 active:bg-surface-high"
               >
                 <TitlePoster path={result.posterPath} alt={result.name} />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-base font-semibold text-ink">
                     {result.name}
                   </span>
-                  <span className="mt-0.5 block text-sm text-muted">
+                  <span className="mt-1 block text-sm text-dim">
                     {[result.year, t(`mediaType.${result.mediaType}`)].filter(Boolean).join(' · ')}
                   </span>
                 </span>

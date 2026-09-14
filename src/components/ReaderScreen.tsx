@@ -7,6 +7,15 @@ import { CuePlayer } from '@/components/CuePlayer';
 import { CueSearchResults } from '@/components/CueSearchResults';
 import type { CueSelection } from '@/components/CueText';
 import { DefinitionPanel, type Lookup } from '@/components/DefinitionPanel';
+import {
+  ArrowLeft,
+  CaretLeft,
+  CaretRight,
+  ICON,
+  ICON_LARGE,
+  X,
+  iconProps,
+} from '@/components/icons';
 import { sceneAround } from '@/lib/sense/context';
 import { episodeLabel } from '@/lib/titles/key';
 import { TimeSheet, type TimeSheetMode } from '@/components/TimeSheet';
@@ -122,17 +131,20 @@ export function ReaderScreen() {
 
   return (
     <div className="mx-auto flex h-dvh w-full max-w-2xl flex-col overflow-hidden">
-      <header className="pt-safe shrink-0 border-b border-line bg-night px-3 pb-3">
-        <div className="flex items-center gap-2 py-1">
+      {/* L'en-tête ne porte qu'un seul objet, le champ de recherche. Le reste
+          est du texte posé : dans le noir, chaque cadre en plus est du bruit
+          qui dispute la place à la réplique. */}
+      <header className="pt-safe shrink-0 border-b border-line px-3 pb-3">
+        <div className="flex items-center gap-1 py-1">
           <Link
             href="/"
             aria-label={tCommon('back')}
-            className="flex size-11 shrink-0 items-center justify-center rounded-xl text-xl text-muted"
+            className="press -ml-1 flex size-11 shrink-0 items-center justify-center rounded-xl text-muted"
           >
-            ←
+            <ArrowLeft size={ICON} {...iconProps} />
           </Link>
-          <h1 className="flex-1 truncate text-sm font-semibold text-muted">{doc.name}</h1>
-          <span className="shrink-0 font-mono text-xs text-dim">
+          <h1 className="min-w-0 flex-1 truncate text-sm text-muted">{doc.name}</h1>
+          <span className="shrink-0 pl-2 font-mono text-xs tabular-nums text-dim">
             {t('position', { current: currentIndex + 1, total: doc.cues.length })}
           </span>
         </div>
@@ -150,7 +162,7 @@ export function ReaderScreen() {
             autoCapitalize="none"
             autoCorrect="off"
             spellCheck={false}
-            className="h-14 w-full rounded-2xl border border-line bg-surface pl-4 pr-14 text-base text-ink placeholder:text-dim focus:border-accent focus:outline-none"
+            className="h-14 w-full rounded-xl bg-surface pl-4 pr-14 text-base text-ink placeholder:text-dim"
           />
           {searching ? (
             <button
@@ -160,41 +172,41 @@ export function ReaderScreen() {
                 inputRef.current?.focus();
               }}
               aria-label={t('clear')}
-              className="absolute right-1 top-1 flex size-12 items-center justify-center rounded-xl text-lg text-muted"
+              className="press absolute right-1 top-1 flex size-12 items-center justify-center rounded-xl text-muted"
             >
-              ×
+              <X size={ICON} {...iconProps} />
             </button>
           ) : null}
         </div>
 
         {/* Mode B : la recherche par temps reste à un tap, sans encombrer le
             mode texte qui est celui que j'utilise dix fois sur dix. */}
-        <div className="mt-2 flex items-center gap-2">
+        <div className="mt-1 flex items-center gap-4">
           <button
             type="button"
             onClick={() => setTimeSheet('goto')}
-            className="min-h-11 whitespace-nowrap rounded-xl border border-line bg-surface px-3 text-sm font-medium text-muted"
+            className="press -ml-1 min-h-11 whitespace-nowrap rounded-xl px-1 text-sm text-dim"
           >
             {tTiming('gotoButton')}
           </button>
           <button
             type="button"
             onClick={() => setTimeSheet('calibrate')}
-            className="min-h-11 whitespace-nowrap rounded-xl border border-line bg-surface px-3 text-sm font-medium text-muted"
+            className="press min-h-11 whitespace-nowrap rounded-xl px-1 text-sm text-dim"
           >
             {tTiming('calibrateButton')}
           </button>
 
           {offsetMs !== 0 ? (
-            <span className="ml-auto flex items-center gap-1 rounded-full bg-accent/15 py-1 pl-3 pr-1 text-sm font-mono text-accent">
+            <span className="ml-auto flex items-center gap-1 rounded-full bg-accent/15 py-1 pl-3 pr-1 font-mono text-sm tabular-nums text-accent">
               {formatOffset(offsetMs)}
               <button
                 type="button"
                 onClick={resetOffset}
                 aria-label={tTiming('resetOffset')}
-                className="flex size-9 items-center justify-center rounded-full text-base"
+                className="press flex size-9 items-center justify-center rounded-full"
               >
-                ×
+                <X size={14} {...iconProps} />
               </button>
             </span>
           ) : null}
@@ -246,21 +258,21 @@ export function ReaderScreen() {
               }
             />
           </main>
-          <nav className="pb-safe shrink-0 border-t border-line bg-night px-3 pt-3">
-            <div className="flex items-stretch gap-3">
+          <nav className="pb-safe shrink-0 px-3 pt-2">
+            <div className="flex items-stretch gap-2">
               <StepButton
                 label={t('previous')}
                 onClick={() => step(-1)}
                 disabled={currentIndex === 0}
               >
-                ‹
+                <CaretLeft size={ICON_LARGE} {...iconProps} />
               </StepButton>
               <StepButton
                 label={t('next')}
                 onClick={() => step(1)}
                 disabled={currentIndex === doc.cues.length - 1}
               >
-                ›
+                <CaretRight size={ICON_LARGE} {...iconProps} />
               </StepButton>
             </div>
           </nav>
@@ -303,7 +315,7 @@ function StepButton({
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
-      className="h-16 flex-1 rounded-2xl border border-line bg-surface text-3xl text-ink transition-colors active:bg-surface-high disabled:opacity-30"
+      className="press flex h-16 flex-1 items-center justify-center rounded-xl bg-surface text-muted active:bg-surface-high disabled:opacity-25"
     >
       {children}
     </button>
@@ -318,12 +330,12 @@ function CenteredMessage({
   action?: { href: string; label: string };
 }) {
   return (
-    <div className="flex h-dvh flex-col items-center justify-center gap-4 px-6 text-center">
-      <p className="text-base text-muted">{children}</p>
+    <div className="flex h-dvh flex-col items-center justify-center gap-5 px-6 text-center">
+      <p className="text-base leading-relaxed text-muted">{children}</p>
       {action ? (
         <Link
           href={action.href}
-          className="flex min-h-14 items-center rounded-xl bg-accent px-6 text-base font-semibold text-accent-ink"
+          className="press flex min-h-14 items-center rounded-xl bg-accent px-6 text-base font-semibold text-accent-ink"
         >
           {action.label}
         </Link>

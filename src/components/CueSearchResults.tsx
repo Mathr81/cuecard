@@ -16,8 +16,8 @@ export function CueSearchResults({ results, query, onSelect }: Props) {
 
   if (results.length === 0) {
     return (
-      <div className="flex flex-col gap-2 px-4 py-10 text-center">
-        <p className="text-base font-semibold text-ink">{t('noResults')}</p>
+      <div className="flex flex-col gap-3 px-6 py-14 text-center">
+        <p className="text-lg font-semibold tracking-tight text-ink">{t('noResults')}</p>
         <p className="mx-auto max-w-sm text-sm leading-relaxed text-muted">{t('noResultsHint')}</p>
       </div>
     );
@@ -25,21 +25,21 @@ export function CueSearchResults({ results, query, onSelect }: Props) {
 
   return (
     <div className="flex flex-col">
-      <p className="px-4 py-2 text-xs font-semibold uppercase tracking-wide text-dim">
+      <p className="px-4 py-3 text-[0.8125rem] text-dim">
         {t('resultsCount', { count: results.length })}
       </p>
-      <ul>
+      <ul className="divide-y divide-line">
         {results.map((result) => (
           <li key={result.cue.index}>
             <button
               type="button"
               onClick={() => onSelect(result.cue.index)}
-              className="flex w-full items-start gap-3 border-b border-line px-4 py-3 text-left active:bg-surface-high"
+              className="flex w-full items-start gap-3 px-4 py-4 text-left transition-colors active:bg-surface"
             >
-              <span className="mt-0.5 min-w-16 shrink-0 font-mono text-xs text-accent">
+              <span className="mt-1 min-w-16 shrink-0 font-mono text-xs tabular-nums text-dim">
                 {formatTimestamp(result.cue.startMs)}
               </span>
-              <span className="flex-1 text-base leading-snug text-ink">
+              <span className="flex-1 text-base leading-relaxed text-ink">
                 <HighlightedText text={result.cue.text.replace(/\n/g, ' ')} query={query} />
               </span>
             </button>

@@ -15,7 +15,7 @@ export function buildEntryMessages(request: WordEntryRequest): ChatMessage[] {
   const language = LANGUAGE_NAME[request.language];
 
   const system = [
-    `You are a bilingual English–${language} lexicographer writing a dictionary entry`,
+    `You are a bilingual English to ${language} lexicographer writing a dictionary entry`,
     'for a French high-school student who meets English words in films and series.',
     'Answer with a single JSON object and nothing else: no markdown fence, no prose.',
     '',
@@ -52,7 +52,7 @@ export function buildEntryMessages(request: WordEntryRequest): ChatMessage[] {
     '  a viewer really runs into. "en" is the English expression, "fr" is what it means',
     `  in ${language}. Up to five, most common first, empty when there are none.`,
     `- "piege" warns, in ${language}, about a false friend or a mistake French speakers`,
-    '  genuinely make with this word. null unless there is a real one — do not invent one.',
+    '  genuinely make with this word. null unless there is a real one. Do not invent one.',
   ].join('\n');
 
   return [

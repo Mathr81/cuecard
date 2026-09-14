@@ -4,7 +4,7 @@ import { alias, plain, REGISTERS } from './schema';
 /**
  * L'entrée bilingue générale : ce que le mot veut dire en soi, pas dans la
  * réplique où on vient de taper dessus. C'est elle qu'on révise, elle qui part
- * sur une carte Anki — la traduction contextuelle, elle, ne sert qu'une fois.
+ * sur une carte Anki. La traduction contextuelle, elle, ne sert qu'une fois.
  */
 
 /** Les identifiants sont ceux du dictionnaire anglais : les libellés traduits

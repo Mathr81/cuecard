@@ -1,19 +1,48 @@
 @import 'tailwindcss';
 
+/*
+ * Palette : noir cassé neutre, une seule couleur d'accent chaude.
+ *
+ * L'accent est un surligneur. Il ne sert qu'à une chose : marquer ce que le
+ * doigt a désigné et ce que ça veut dire en français. Tout ce qui est
+ * décoratif reste gris, sinon l'accent ne veut plus rien dire.
+ *
+ * Contrastes vérifiés sur `night`, `surface` et `surface-high` : ink 17.7,
+ * muted 8.2, dim 5.7, accent 10.0, danger 9.4. Le plus faible, dim sur
+ * surface-high, est à 4.8. Tout passe WCAG AA pour du texte courant.
+ */
 @theme {
-  --color-night: #07080b;
-  --color-surface: #12141a;
-  --color-surface-high: #1c202a;
-  --color-line: #2b303c;
-  --color-ink: #f4f6fa;
-  --color-muted: #a3acbd;
-  --color-dim: #6b7484;
-  --color-accent: #7dd3fc;
-  --color-accent-ink: #04121a;
-  --color-danger: #fca5a5;
+  --color-night: #0a0a0b;
+  --color-surface: #141416;
+  --color-surface-high: #1e1e21;
+  --color-line: #2c2c30;
+  --color-ink: #f4f2ef;
+  --color-ink-soft: #c9c5bf;
+  --color-muted: #a9a6a1;
+  --color-dim: #8d8983;
+  --color-accent: #e0b070;
+  --color-accent-ink: #14100a;
+  --color-danger: #ef9d95;
 
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
+
+/*
+ * Rayons : une règle, trois paliers, appliquée partout.
+ *
+ *   rounded-xl   (12px)  tout ce qui se touche : boutons, champs, lignes
+ *                        cliquables, vignettes
+ *   rounded-2xl  (16px)  les surfaces qui contiennent : cartes, encarts,
+ *                        la feuille du bas
+ *   rounded-full         les pastilles qui ne sont qu'une étiquette
+ *   rounded      (4px)  les marques posées dans le texte : le surlignage
+ *                       d'un résultat, les barres du squelette de chargement
+ *
+ * Un fond plein signale une cible tactile ou un contenant. Une bordure ne
+ * signale rien toute seule : elle ne sert plus qu'à séparer (filet d'en-tête,
+ * note de source) ou à marquer une erreur.
+ */
 
 :root {
   color-scheme: dark;
@@ -36,13 +65,24 @@ body {
 @layer utilities {
   /* Encoches et barre de gestes : le contenu ne doit jamais passer dessous. */
   .pt-safe {
-    padding-top: max(0.75rem, env(safe-area-inset-top));
+    padding-top: max(1rem, env(safe-area-inset-top));
   }
   .pb-safe {
     padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
   }
   .mb-safe {
     margin-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Le retour tactile des cibles : l'écran est la seule chose qui répond
+     quand on appuie dans le noir. */
+  .press {
+    transition:
+      transform 120ms ease-out,
+      background-color 120ms ease-out;
+  }
+  .press:active {
+    transform: scale(0.98);
   }
 }
 
@@ -62,11 +102,20 @@ input[type='search']::-webkit-search-decoration {
   -webkit-touch-callout: none;
 }
 
+/* Au clavier, la cible doit se voir ; au doigt, l'anneau n'a rien à faire là. */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+  .press:active {
+    transform: none;
   }
 }

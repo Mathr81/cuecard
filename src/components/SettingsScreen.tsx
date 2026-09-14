@@ -31,7 +31,7 @@ export function SettingsScreen({
   const t = useTranslations('settings');
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       <LocaleChoice
         label={t('uiLanguage')}
         description={t('uiLanguageHelp')}
@@ -71,14 +71,16 @@ function TokenCounter({
   const [pending, startTransition] = useTransition();
 
   return (
-    <section className="rounded-2xl border border-line bg-surface p-4">
-      <h2 className="text-base font-semibold text-ink">{t('tokens')}</h2>
-      <p className="mt-1 text-sm leading-relaxed text-muted">{t('tokensHelp')}</p>
+    <section className="border-t border-line pt-6 first:border-t-0 first:pt-0">
+      <h2 className="text-base font-semibold tracking-tight text-ink">{t('tokens')}</h2>
+      <p className="mt-1.5 text-sm leading-relaxed text-muted">{t('tokensHelp')}</p>
 
-      <p className="mt-3 font-mono text-3xl text-accent">
+      {/* Le montant est une donnée, pas une réponse : il est gros parce qu'on
+          vient le lire, pas ambre, qui reste réservé au sens d'un mot. */}
+      <p className="mt-5 font-mono text-4xl tabular-nums tracking-tight text-ink">
         {pricing ? formatUsd(estimateCostUsd(usage, pricing)) : format.number(usage.totalTokens)}
       </p>
-      <p className="text-xs text-dim">
+      <p className="mt-1.5 text-xs text-dim">
         {pricing ? `${format.number(usage.totalTokens)} ${t('tokensUnit')} · ` : ''}
         {t('tokensBreakdown', {
           prompt: usage.promptTokens,
@@ -86,7 +88,7 @@ function TokenCounter({
         })}
       </p>
 
-      <dl className="mt-3 flex flex-col gap-1 text-sm">
+      <dl className="mt-5 flex flex-col gap-2 text-sm">
         <Row label={t('tokensCalls')} value={format.number(usage.calls)} />
         {/* Les appels servis par le cache sont gratuits : les compter à part
             montre ce que le cache fait vraiment gagner. */}
@@ -95,7 +97,7 @@ function TokenCounter({
           label={t('tokensSince')}
           value={
             usage.since === null
-              ? '—'
+              ? t('never')
               : format.dateTime(usage.since, { dateStyle: 'short', timeStyle: 'short' })
           }
         />
@@ -114,13 +116,13 @@ function TokenCounter({
       {/* OpenRouter retire les modèles obsolètes de sa liste : un identifiant
           introuvable annonce des appels qui vont échouer. */}
       {!pricing ? (
-        <p className="mt-3 rounded-xl border border-danger/40 bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="mt-5 rounded-xl border border-danger/40 bg-danger/10 px-4 py-3 text-sm leading-relaxed text-danger">
           {t('unknownModel', { model })}
         </p>
       ) : null}
 
       {!hasOpenRouterKey ? (
-        <p className="mt-3 rounded-xl border border-danger/40 bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p className="mt-5 rounded-xl border border-danger/40 bg-danger/10 px-4 py-3 text-sm leading-relaxed text-danger">
           {t('missingOpenRouterKey')}
         </p>
       ) : null}
@@ -134,7 +136,7 @@ function TokenCounter({
             router.refresh();
           })
         }
-        className="mt-4 min-h-12 w-full rounded-xl border border-line bg-surface-high text-sm font-semibold text-ink disabled:opacity-50"
+        className="press mt-6 min-h-12 w-full rounded-xl bg-surface-high text-sm font-semibold text-ink disabled:opacity-50"
       >
         {t('tokensReset')}
       </button>
@@ -155,8 +157,8 @@ function formatUsd(amount: number): string {
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline justify-between gap-3">
-      <dt className="text-muted">{label}</dt>
-      <dd className="truncate font-mono text-xs text-ink">{value}</dd>
+      <dt className="text-dim">{label}</dt>
+      <dd className="truncate font-mono text-xs tabular-nums text-muted">{value}</dd>
     </div>
   );
 }

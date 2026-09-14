@@ -24,11 +24,11 @@ export function LocaleChoice({
   const names: Record<Locale, string> = { fr: t('french'), en: t('english') };
 
   return (
-    <section className="rounded-2xl border border-line bg-surface p-4">
-      <h2 className="text-base font-semibold text-ink">{label}</h2>
-      <p className="mt-1 text-sm leading-relaxed text-muted">{description}</p>
+    <section className="border-t border-line pt-6 first:border-t-0 first:pt-0">
+      <h2 className="text-base font-semibold tracking-tight text-ink">{label}</h2>
+      <p className="mt-1.5 text-sm leading-relaxed text-muted">{description}</p>
 
-      <div className="mt-3 flex gap-2" role="group" aria-label={label}>
+      <div className="mt-4 flex gap-2" role="group" aria-label={label}>
         {locales.map((locale) => (
           <button
             key={locale}
@@ -41,10 +41,8 @@ export function LocaleChoice({
                 router.refresh();
               })
             }
-            className={`min-h-12 flex-1 rounded-xl border text-sm font-semibold transition-colors ${
-              active === locale
-                ? 'border-accent bg-accent text-accent-ink'
-                : 'border-line bg-surface-high text-muted'
+            className={`press min-h-12 flex-1 rounded-xl text-sm font-semibold ${
+              active === locale ? 'bg-accent text-accent-ink' : 'bg-surface-high text-muted'
             }`}
           >
             {names[locale]}

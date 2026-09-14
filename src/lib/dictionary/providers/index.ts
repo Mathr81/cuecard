@@ -33,7 +33,7 @@ function isSourceId(value: string): value is DictionarySourceId {
 /**
  * L'ordre d'interrogation, surchargeable par `DICTIONARY_SOURCES` : une liste
  * d'identifiants séparés par des virgules. Un identifiant inconnu est ignoré
- * plutôt que fatal — une faute de frappe dans le .env ne doit pas priver
+ * plutôt que fatal : une faute de frappe dans le .env ne doit pas priver
  * l'app de dictionnaire.
  */
 export function resolveProviderOrder(

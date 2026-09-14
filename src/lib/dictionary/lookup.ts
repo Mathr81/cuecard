@@ -31,7 +31,7 @@ function attribute(entry: DictionaryEntry, requested: string): DictionaryEntry {
  * Interroge les sources dans l'ordre, chacune sur les formes candidates du
  * mot, et rend la première entrée qui dit vraiment quelque chose.
  *
- * Une source qui ne répond pas est abandonnée immédiatement — insister sur
+ * Une source qui ne répond pas est abandonnée immédiatement : insister sur
  * ses autres formes ne ferait que repousser celle qui, elle, répond.
  */
 export async function lookupDictionary(

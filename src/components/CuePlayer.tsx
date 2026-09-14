@@ -62,7 +62,7 @@ export function CuePlayer({ cues, currentIndex, onSelect, onStep, selection, onL
       onTouchEnd={onTouchEnd}
     >
       <div className="m-auto flex w-full flex-col py-4">
-        <div className="flex flex-col items-center gap-2 text-center">
+        <div className="flex flex-col items-center gap-1 text-center">
           {before.map((cue) => (
             <ContextCue
               key={cue.index}
@@ -73,11 +73,15 @@ export function CuePlayer({ cues, currentIndex, onSelect, onStep, selection, onL
           ))}
         </div>
 
-        <div className="my-5 flex flex-col items-center gap-3">
-          <span className="rounded-full bg-surface px-3 py-1 font-mono text-xs tracking-wide text-accent">
+        {/* La réplique courante est la seule chose qui compte sur cet écran :
+            elle est deux fois plus grosse que ses voisines, et l'accent lui est
+            réservé pour marquer ce que le doigt désigne. L'horodatage redevient
+            ce qu'il est, une donnée de service. */}
+        <div className="my-7 flex flex-col items-center gap-4">
+          <span className="font-mono text-xs tabular-nums text-dim">
             {formatTimestamp(current.startMs)}
           </span>
-          <div className="text-2xl font-medium leading-tight text-ink sm:text-3xl">
+          <div className="text-[1.75rem] font-medium leading-[1.2] tracking-[-0.01em] text-ink sm:text-[2.125rem]">
             <CueText
               text={current.text}
               selection={selection}
@@ -89,7 +93,7 @@ export function CuePlayer({ cues, currentIndex, onSelect, onStep, selection, onL
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-2 text-center">
+        <div className="flex flex-col items-center gap-1 text-center">
           {after.map((cue) => (
             <ContextCue
               key={cue.index}
@@ -115,14 +119,16 @@ function ContextCue({
   distance: number;
   onSelect: (index: number) => void;
 }) {
-  // Le dégradé d'opacité donne le sens de lecture sans ajouter de chrome.
-  const tone = distance === 1 ? 'text-muted' : distance === 2 ? 'text-dim' : 'text-dim/60';
+  // Le dégradé donne le sens de lecture sans ajouter de chrome. Il s'arrête à
+  // `dim`, qui reste lisible : ces lignes se touchent pour sauter à une autre
+  // réplique, et une cible qu'on ne lit pas ne se vise pas.
+  const tone = distance === 1 ? 'text-ink-soft' : distance === 2 ? 'text-muted' : 'text-dim';
 
   return (
     <button
       type="button"
       onClick={() => onSelect(cue.index)}
-      className={`line-clamp-2 min-h-11 w-full max-w-md px-2 text-sm leading-snug ${tone}`}
+      className={`press line-clamp-2 min-h-11 w-full max-w-md rounded-xl px-2 text-[0.9375rem] leading-snug ${tone}`}
     >
       {cue.text.replace(/\n/g, ' ')}
     </button>

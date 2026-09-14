@@ -10,7 +10,7 @@ export function TitlePoster({ path, alt }: { path: string | null; alt: string })
     return (
       <div
         aria-hidden
-        className="shrink-0 rounded-lg bg-surface-high"
+        className="shrink-0 rounded-xl bg-surface-high"
         style={{ width: POSTER_WIDTH, height: POSTER_HEIGHT }}
       />
     );
@@ -22,7 +22,7 @@ export function TitlePoster({ path, alt }: { path: string | null; alt: string })
       alt={alt}
       width={POSTER_WIDTH}
       height={POSTER_HEIGHT}
-      className="shrink-0 rounded-lg object-cover"
+      className="shrink-0 rounded-xl object-cover"
       unoptimized
     />
   );

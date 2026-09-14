@@ -5,7 +5,7 @@ import type { ApiErrorCode } from '@/lib/api/client';
 
 /**
  * Jamais d'écran blanc : chaque panne dit ce qui s'est passé, chez qui, et ce
- * qu'on peut faire — réessayer, ou charger un .srt à la main.
+ * qu'on peut faire : réessayer, ou charger un .srt à la main.
  */
 export function ExternalError({
   code,
@@ -28,7 +28,7 @@ export function ExternalError({
         <button
           type="button"
           onClick={onRetry}
-          className="min-h-11 self-start rounded-xl border border-danger/40 px-4 text-sm font-semibold text-danger"
+          className="press min-h-11 self-start rounded-xl border border-danger/40 px-4 text-sm font-semibold text-danger"
         >
           {t('retry')}
         </button>

@@ -53,7 +53,8 @@
     "rate": "Rate",
     "ratePerMillion": "{prompt} / M in · {completion} / M out",
     "unknownModel": "OpenRouter does not know “{model}”. It was most likely retired: calls will fail until OPENROUTER_MODEL is changed.",
-    "tokensUnit": "tokens"
+    "tokensUnit": "tokens",
+    "never": "no calls yet"
   },
   "errors": {
     "unsupportedFile": "Unrecognised format. An .srt or .vtt file is required.",
@@ -145,7 +146,7 @@
       "tv": "Series"
     },
     "pickSeason": "Pick a season",
-    "pickEpisode": "Season {season} — pick an episode",
+    "pickEpisode": "Season {season}: pick an episode",
     "episodeCount": "{count, plural, one {# episode} other {# episodes}}",
     "historyEmpty": "No title opened yet.",
     "forget": "Remove from history",

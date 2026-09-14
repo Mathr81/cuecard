@@ -2,6 +2,15 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import {
+  Callout,
+  Example,
+  Meta,
+  MoreButton,
+  PanelSection,
+  RetryButton,
+  Skeleton,
+} from '@/components/panel';
 import { ApiError, apiGet, type ApiErrorCode } from '@/lib/api/client';
 import type { TokenUsage } from '@/lib/openrouter/types';
 import type { WordEntry } from '@/lib/sense/entry';
@@ -23,8 +32,9 @@ const VISIBLE_SENSES = 3;
 
 /**
  * L'entrée bilingue du mot : ce qu'il veut dire en général, pas dans cette
- * réplique-là. C'est celle qu'on révise — la traduction contextuelle, au-dessus,
- * ne vaut que pour la scène en cours.
+ * réplique-là. C'est celle qu'on révise. La traduction contextuelle, au-dessus,
+ * ne vaut que pour la scène en cours : elle garde l'ambre, celle-ci reste en
+ * blanc, et la hiérarchie du panneau se lit sans avoir à lire.
  */
 export function WordEntryBlock({ term }: { term: string }) {
   const t = useTranslations('entry');
@@ -52,63 +62,44 @@ export function WordEntryBlock({ term }: { term: string }) {
 
   if (state.status === 'loading') {
     return (
-      <Block title={t('title')}>
-        <div className="flex flex-col gap-2" aria-live="polite" aria-busy="true">
-          <span className="sr-only">{t('loading')}</span>
-          <div className="h-6 w-3/5 animate-pulse rounded bg-surface-high" />
-          <div className="h-4 w-full animate-pulse rounded bg-surface-high" />
-          <div className="h-4 w-2/3 animate-pulse rounded bg-surface-high" />
-        </div>
-      </Block>
+      <PanelSection label={t('title')}>
+        <Skeleton label={t('loading')} widths={['w-3/5', 'w-full', 'w-2/3']} />
+      </PanelSection>
     );
   }
 
   if (state.status === 'error') {
     return (
-      <Block title={t('title')}>
+      <PanelSection label={t('title')}>
         <p className="text-sm leading-relaxed text-muted">
           {tErrors(`external.${state.code}`, { service: 'OpenRouter' })}
         </p>
         {state.code !== 'missing_key' ? (
-          <button
-            type="button"
-            onClick={retry}
-            className="mt-3 min-h-11 rounded-xl border border-line bg-surface-high px-4 text-sm font-semibold text-ink"
-          >
-            {tErrors('retry')}
-          </button>
+          <RetryButton label={tErrors('retry')} onClick={retry} />
         ) : null}
-      </Block>
+      </PanelSection>
     );
   }
 
   return (
-    <Block title={t('title')}>
+    <PanelSection label={t('title')}>
       <SenseList senses={state.entry.traductions} />
 
       {state.entry.expressions.length > 0 ? (
-        <section className="mt-4">
-          <h4 className="text-xs font-semibold uppercase tracking-wide text-dim">
-            {t('expressions')}
-          </h4>
-          <ul className="mt-2 flex flex-col gap-2">
+        <div className="mt-6">
+          <h4 className="text-[0.8125rem] text-dim">{t('expressions')}</h4>
+          <ul className="mt-3 flex flex-col gap-3">
             {state.entry.expressions.map((expression) => (
-              <li key={expression.en} className="border-l-2 border-line pl-2.5">
-                <p className="text-sm font-medium leading-relaxed text-ink">{expression.en}</p>
-                <p className="text-sm leading-relaxed text-muted">{expression.fr}</p>
+              <li key={expression.en}>
+                <Example en={expression.en} fr={expression.fr} />
               </li>
             ))}
           </ul>
-        </section>
-      ) : null}
-
-      {state.entry.piege ? (
-        <div className="mt-4 rounded-xl border border-line bg-surface-high px-3 py-2.5">
-          <p className="text-xs font-semibold uppercase tracking-wide text-dim">{t('trap')}</p>
-          <p className="mt-1 text-sm leading-relaxed text-muted">{state.entry.piege}</p>
         </div>
       ) : null}
-    </Block>
+
+      {state.entry.piege ? <Callout label={t('trap')}>{state.entry.piege}</Callout> : null}
+    </PanelSection>
   );
 }
 
@@ -121,7 +112,7 @@ function SenseList({ senses }: { senses: WordEntry['traductions'] }) {
 
   return (
     <>
-      <ol className="flex list-none flex-col gap-4">
+      <ol className="flex list-none flex-col gap-5">
         {shown.map((sense, index) => (
           <SenseRow
             key={`${sense.nature}-${sense.equivalents[0]}`}
@@ -132,13 +123,10 @@ function SenseList({ senses }: { senses: WordEntry['traductions'] }) {
       </ol>
 
       {hidden > 0 ? (
-        <button
-          type="button"
+        <MoreButton
+          label={expanded ? t('showLess') : t('showMore', { count: hidden })}
           onClick={() => setExpanded((value) => !value)}
-          className="mt-3 min-h-11 w-full rounded-xl border border-line bg-surface-high px-4 text-sm font-semibold text-ink"
-        >
-          {expanded ? t('showLess') : t('showMore', { count: hidden })}
-        </button>
+        />
       ) : null}
     </>
   );
@@ -149,29 +137,30 @@ function SenseRow({ sense, rank }: { sense: WordEntry['traductions'][number]; ra
   const tRegister = useTranslations('sense');
 
   return (
-    <li className="flex gap-2.5">
-      <span className="mt-1 font-mono text-xs text-dim">{rank}</span>
+    <li className="flex gap-3">
+      <span className="mt-1 font-mono text-xs tabular-nums text-dim">{rank}</span>
       <div className="min-w-0 flex-1">
-        <p className="text-base font-semibold leading-snug text-accent">
+        <p className="text-base font-semibold leading-snug text-ink">
           {sense.equivalents.join(', ')}
         </p>
 
-        <div className="mt-1.5 flex flex-wrap gap-1.5">
-          <Badge>{tParts(`partOfSpeech.${partKey(sense.nature)}`)}</Badge>
-          {/* Le registre neutre n'apprend rien : ne l'afficher que s'il marque. */}
-          {sense.registre !== 'neutre' ? (
-            <Badge>{tRegister(`register.${sense.registre}`)}</Badge>
-          ) : null}
-        </div>
+        <Meta
+          parts={[
+            tParts(`partOfSpeech.${partKey(sense.nature)}`),
+            // Le registre neutre n'apprend rien : ne l'afficher que s'il marque.
+            sense.registre === 'neutre' ? null : tRegister(`register.${sense.registre}`),
+          ]}
+        />
 
+        {/* Ce qui distingue ce sens du précédent : une phrase, sur sa ligne,
+            pas un troisième fragment collé à la nature grammaticale. */}
         {sense.precision ? (
           <p className="mt-1.5 text-sm leading-relaxed text-muted">{sense.precision}</p>
         ) : null}
 
         {sense.exemple ? (
-          <div className="mt-2 border-l-2 border-line pl-2.5">
-            <p className="text-sm leading-relaxed text-ink">{sense.exemple.en}</p>
-            <p className="text-sm leading-relaxed text-muted">{sense.exemple.fr}</p>
+          <div className="mt-3">
+            <Example en={sense.exemple.en} fr={sense.exemple.fr} />
           </div>
         ) : null}
       </div>
@@ -182,21 +171,4 @@ function SenseRow({ sense, rank }: { sense: WordEntry['traductions'][number]; ra
 /** Les clés de traduction n'ont ni espace ni accent, les valeurs du contrat si. */
 function partKey(nature: string): string {
   return nature === 'phrasal verb' ? 'phrasalVerb' : nature;
-}
-
-function Badge({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="rounded-full bg-surface-high px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-muted">
-      {children}
-    </span>
-  );
-}
-
-function Block({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="mt-6">
-      <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-dim">{title}</h3>
-      {children}
-    </section>
-  );
 }

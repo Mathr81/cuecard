@@ -5,7 +5,7 @@ import { ProviderUnavailableError, type DictionaryProvider } from './types';
 /**
  * api.dictionaryapi.dev : la source historique de l'app. Elle est la seule à
  * fournir un enregistrement audio, mais elle met une vingtaine de secondes à
- * répondre et renvoie régulièrement des 5xx — d'où son rang de remplaçante.
+ * répondre et renvoie régulièrement des 5xx, d'où son rang de remplaçante.
  * Surchargeable pour viser un miroir auto-hébergé.
  */
 const BASE_URL = envOr('DICTIONARY_API_URL', 'https://api.dictionaryapi.dev/api/v2/entries/en');

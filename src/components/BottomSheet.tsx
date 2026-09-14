@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { useTranslations } from 'next-intl';
+import { ICON, X, iconProps } from '@/components/icons';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 /** Au-delà, le geste est une intention de fermer, pas une hésitation. */
@@ -11,19 +12,21 @@ interface Props {
   open: boolean;
   title: string;
   subtitle?: string;
+  /** Une commande posée dans l'en-tête, à gauche de la croix. */
+  action?: React.ReactNode;
   onClose: () => void;
   children: React.ReactNode;
 }
 
 /**
- * Feuille glissante en bas sur mobile — attrapable au pouce, fermable d'un
- * balayage vers le bas — et panneau latéral sur desktop, où le bas de l'écran
+ * Feuille glissante en bas sur mobile (attrapable au pouce, fermable d'un
+ * balayage vers le bas) et panneau latéral sur desktop, où le bas de l'écran
  * est loin de la souris.
  *
  * Le panneau reste monté en permanence : l'ouverture et la fermeture ne sont
  * qu'un changement de classe, donc les deux sens s'animent sans machine à états.
  */
-export function BottomSheet({ open, title, subtitle, onClose, children }: Props) {
+export function BottomSheet({ open, title, subtitle, action, onClose, children }: Props) {
   const t = useTranslations('reader');
   const isDesktop = useMediaQuery('(min-width: 640px)');
 
@@ -94,7 +97,7 @@ export function BottomSheet({ open, title, subtitle, onClose, children }: Props)
         aria-label={title}
         tabIndex={-1}
         style={drag ? { transform: `translateY(${drag.offset}px)`, transition: 'none' } : undefined}
-        className={`absolute inset-x-0 bottom-0 flex max-h-[85dvh] flex-col rounded-t-3xl border-t border-line bg-surface transition-transform duration-200 ease-out outline-none sm:inset-y-0 sm:left-auto sm:right-0 sm:max-h-none sm:w-[26rem] sm:rounded-none sm:rounded-l-3xl sm:border-l sm:border-t-0 ${
+        className={`absolute inset-x-0 bottom-0 flex max-h-[85dvh] flex-col rounded-t-2xl border-t border-line bg-surface transition-transform duration-200 ease-out outline-none sm:inset-y-0 sm:left-auto sm:right-0 sm:max-h-none sm:w-[26rem] sm:rounded-none sm:rounded-l-2xl sm:border-l sm:border-t-0 ${
           open
             ? 'translate-y-0 sm:translate-x-0'
             : 'translate-y-full sm:translate-y-0 sm:translate-x-full'
@@ -107,19 +110,23 @@ export function BottomSheet({ open, title, subtitle, onClose, children }: Props)
           onPointerCancel={onGrabberUp}
           className="shrink-0 cursor-grab touch-none px-4 pt-3 sm:cursor-default"
         >
-          <div className="mx-auto h-1.5 w-12 rounded-full bg-line sm:hidden" />
-          <div className="flex items-start gap-3 pt-3 pb-2">
+          <div className="mx-auto h-1 w-10 rounded-full bg-line sm:hidden" />
+          <div className="flex items-start gap-3 pt-4 pb-3">
             <div className="min-w-0 flex-1">
-              <h2 className="truncate text-xl font-bold tracking-tight text-ink">{title}</h2>
-              {subtitle ? <p className="mt-1 line-clamp-2 text-sm text-dim">{subtitle}</p> : null}
+              <h2 className="truncate text-2xl font-semibold tracking-tight text-ink">{title}</h2>
+              {/* La réplique d'où vient le mot : le contexte, pas le sujet. */}
+              {subtitle ? (
+                <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-dim">{subtitle}</p>
+              ) : null}
             </div>
+            {action}
             <button
               type="button"
               onClick={onClose}
               aria-label={t('close')}
-              className="-mr-1 flex size-11 shrink-0 items-center justify-center rounded-xl text-lg text-muted"
+              className="press -mr-1 flex size-11 shrink-0 items-center justify-center rounded-xl text-muted"
             >
-              ×
+              <X size={ICON} {...iconProps} />
             </button>
           </div>
         </div>

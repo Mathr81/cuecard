@@ -85,8 +85,8 @@ export function SubtitleDropzone() {
         }}
         onDragLeave={() => setDragging(false)}
         onDrop={onDrop}
-        className={`rounded-2xl border-2 border-dashed p-6 text-center transition-colors ${
-          dragging ? 'border-accent bg-surface-high' : 'border-line bg-surface'
+        className={`rounded-2xl border border-dashed p-6 text-center transition-colors ${
+          dragging ? 'border-accent bg-surface-high' : 'border-line'
         }`}
       >
         <input
@@ -104,17 +104,17 @@ export function SubtitleDropzone() {
           type="button"
           disabled={busy}
           onClick={() => inputRef.current?.click()}
-          className="min-h-14 w-full rounded-xl bg-accent px-5 text-base font-semibold text-accent-ink disabled:opacity-60"
+          className="press min-h-14 w-full rounded-xl bg-accent px-5 text-base font-semibold text-accent-ink disabled:opacity-60"
         >
           {busy ? t('parsing') : t('dropzone')}
         </button>
-        <p className="mt-3 hidden text-sm text-muted sm:block">{t('dropzoneHint')}</p>
+        <p className="mt-3 hidden text-sm text-dim sm:block">{t('dropzoneHint')}</p>
       </div>
 
       {error ? (
         <p
           role="alert"
-          className="rounded-xl border border-danger/40 bg-danger/10 px-4 py-3 text-sm text-danger"
+          className="rounded-xl border border-danger/40 bg-danger/10 px-4 py-3 text-sm leading-relaxed text-danger"
         >
           {error}
         </p>

@@ -53,7 +53,7 @@ export function TimeSheet({ mode, currentCueStartMs, onClose, onSubmit }: Props)
         onClose();
       }}
     >
-      <p className="text-sm leading-relaxed text-muted">
+      <p className="mt-1 text-sm leading-relaxed text-muted">
         {mode === 'calibrate'
           ? t('calibrateHelp', { time: formatTimestamp(currentCueStartMs) })
           : t('gotoHelp')}
@@ -77,11 +77,11 @@ export function TimeSheet({ mode, currentCueStartMs, onClose, onSubmit }: Props)
           autoCapitalize="none"
           autoCorrect="off"
           spellCheck={false}
-          className="h-14 w-full rounded-2xl border border-line bg-surface-high px-4 text-lg text-ink placeholder:text-dim focus:border-accent focus:outline-none"
+          className="h-14 w-full rounded-xl bg-surface-high px-4 text-lg text-ink placeholder:text-dim"
         />
 
         {/* Montrer ce qui a été compris évite de retaper trois fois dans le noir. */}
-        <p className="min-h-5 px-1 text-sm" aria-live="polite">
+        <p className="min-h-5 text-sm leading-relaxed" aria-live="polite">
           {value.trim().length === 0 ? null : outOfRange && offsetMs !== null ? (
             <span className="text-danger">
               {t('offsetOutOfRange', { offset: formatOffset(offsetMs) })}
@@ -90,7 +90,7 @@ export function TimeSheet({ mode, currentCueStartMs, onClose, onSubmit }: Props)
             <span className={unusual ? 'text-danger' : 'text-accent'}>
               {mode === 'calibrate' && offsetMs !== null
                 ? `${t('calibratePreview', { offset: formatOffset(offsetMs) })}${
-                    unusual ? ` — ${t('offsetUnusual')}` : ''
+                    unusual ? `, ${t('offsetUnusual')}` : ''
                   }`
                 : t('gotoPreview', { time: formatTimestamp(playerMs) })}
             </span>
@@ -102,7 +102,7 @@ export function TimeSheet({ mode, currentCueStartMs, onClose, onSubmit }: Props)
         <button
           type="submit"
           disabled={!valid}
-          className="min-h-14 rounded-xl bg-accent text-base font-semibold text-accent-ink disabled:opacity-40"
+          className="press min-h-14 rounded-xl bg-accent text-base font-semibold text-accent-ink disabled:opacity-40"
         >
           {mode === 'calibrate' ? t('calibrateAction') : t('gotoAction')}
         </button>

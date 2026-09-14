@@ -4,8 +4,8 @@ import type { DictionaryEntry, DictionaryMeaning } from '../types';
 import { ProviderUnavailableError, type DictionaryProvider } from './types';
 
 /**
- * api.datamuse.com : dernier recours. Les définitions y sont plus sèches —
- * pas de phonétique, pas d'exemples — mais l'infrastructure est indépendante
+ * api.datamuse.com : dernier recours. Les définitions y sont plus sèches
+ * (pas de phonétique, pas d'exemples), mais l'infrastructure est indépendante
  * des deux autres, ce qui est tout l'intérêt : quand elles tombent ensemble,
  * il reste quelque chose à afficher.
  */

@@ -10,7 +10,7 @@ export const UNUSUAL_OFFSET_MS = 5 * 60 * 1000;
 
 /**
  * Le temps affiché par Netflix moins le temps de la réplique dans le fichier.
- * Positif quand le fichier est en avance sur le lecteur — le cas courant :
+ * Positif quand le fichier est en avance sur le lecteur, le cas courant :
  * le lecteur compte le récap et les logos que le fichier ignore.
  */
 export function computeOffset(playerMs: number, cueStartMs: number): number {

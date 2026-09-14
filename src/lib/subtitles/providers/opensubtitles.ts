@@ -21,7 +21,7 @@ interface RawEntry {
 /**
  * L'API plafonne à cent résultats toutes langues confondues : sur un film
  * populaire, l'anglais n'y figure tout simplement pas. Le segment
- * `sublanguageid-eng` déplace le filtre côté serveur et règle le problème —
+ * `sublanguageid-eng` déplace le filtre côté serveur et règle le problème,
  * The Matrix passe de zéro résultat anglais à soixante-treize.
  */
 export function buildSearchUrl(lookup: SubtitleLookup): string | null {

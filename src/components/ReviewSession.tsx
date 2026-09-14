@@ -53,7 +53,7 @@ export function ReviewSession() {
   if (unreachable) {
     return (
       <Centered>
-        <p className="text-base font-semibold text-ink">{t('unreachable')}</p>
+        <p className="text-lg font-semibold tracking-tight text-ink">{t('unreachable')}</p>
         <p className="text-sm leading-relaxed text-muted">{t('unreachableHint')}</p>
       </Centered>
     );
@@ -66,11 +66,11 @@ export function ReviewSession() {
   if (queue.length === 0) {
     return (
       <Centered>
-        <p className="text-base font-semibold text-ink">{t('empty')}</p>
+        <p className="text-lg font-semibold tracking-tight text-ink">{t('empty')}</p>
         <p className="text-sm leading-relaxed text-muted">{t('emptyHint')}</p>
         <Link
           href="/vocabulaire"
-          className="flex min-h-12 items-center rounded-xl border border-line bg-surface px-5 text-sm font-semibold text-ink"
+          className="press flex min-h-12 items-center rounded-xl bg-surface px-5 text-sm font-semibold text-ink"
         >
           {t('backToList')}
         </Link>
@@ -83,13 +83,13 @@ export function ReviewSession() {
   if (!entry) {
     return (
       <Centered>
-        <p className="text-2xl font-bold text-ink">{t('reviewDone')}</p>
+        <p className="text-2xl font-semibold tracking-tight text-ink">{t('reviewDone')}</p>
         <p className="text-base text-muted">
           {t('reviewScore', { known: progress.known, total: queue.length })}
         </p>
         <Link
           href="/vocabulaire"
-          className="flex min-h-12 items-center rounded-xl bg-accent px-5 text-sm font-semibold text-accent-ink"
+          className="press flex min-h-12 items-center rounded-xl bg-accent px-5 text-sm font-semibold text-accent-ink"
         >
           {t('backToList')}
         </Link>
@@ -99,34 +99,38 @@ export function ReviewSession() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <p className="px-1 font-mono text-xs text-dim">
+      <p className="font-mono text-xs tabular-nums text-dim">
         {t('reviewPosition', { current: position + 1, total: queue.length })}
       </p>
 
       <div className="mt-3 flex flex-1 flex-col justify-center">
-        <article className="rounded-2xl border border-line bg-surface px-5 py-6">
-          <p className="text-center text-3xl font-semibold leading-tight text-ink">{entry.term}</p>
+        {/* Une carte, un mot. C'est l'écran le plus vide de l'app, et c'est
+            voulu : il ne s'y passe qu'une chose. */}
+        <article className="rounded-2xl bg-surface px-5 py-8">
+          <p className="text-center text-[2rem] font-semibold leading-tight tracking-tight text-ink">
+            {entry.term}
+          </p>
 
-          <p className="mt-5 text-center text-base leading-relaxed text-muted">
+          <p className="mt-6 text-center text-base leading-relaxed text-muted">
             <HighlightedText text={entry.cueText} query={entry.term} />
           </p>
-          <p className="mt-2 text-center font-mono text-xs text-dim">
+          <p className="mt-3 text-center font-mono text-xs tabular-nums text-dim">
             {[entry.titleName, entry.episodeLabel, formatTimestamp(entry.startMs)]
               .filter(Boolean)
               .join(' · ')}
           </p>
 
           {revealed ? (
-            <div className="mt-6 border-t border-line pt-4">
+            <div className="mt-7 border-t border-line pt-5">
               {entry.translation ? (
-                <p className="text-lg font-semibold leading-snug text-accent">
+                <p className="text-xl font-semibold leading-snug tracking-tight text-accent">
                   {entry.translation}
                 </p>
               ) : (
                 <p className="text-sm text-dim">{t('noTranslation')}</p>
               )}
               {entry.explanation ? (
-                <p className="mt-2 text-sm leading-relaxed text-ink">{entry.explanation}</p>
+                <p className="mt-2.5 text-sm leading-relaxed text-ink">{entry.explanation}</p>
               ) : null}
               {entry.reviews > 0 ? (
                 <p className="mt-3 text-xs text-dim">
@@ -144,14 +148,14 @@ export function ReviewSession() {
             <button
               type="button"
               onClick={() => answer(entry, false)}
-              className="min-h-14 flex-1 rounded-2xl border border-danger/40 bg-danger/10 text-base font-semibold text-danger"
+              className="press min-h-14 flex-1 rounded-xl bg-danger/10 text-base font-semibold text-danger"
             >
               {t('notKnown')}
             </button>
             <button
               type="button"
               onClick={() => answer(entry, true)}
-              className="min-h-14 flex-1 rounded-2xl bg-accent text-base font-semibold text-accent-ink"
+              className="press min-h-14 flex-1 rounded-xl bg-accent text-base font-semibold text-accent-ink"
             >
               {t('known')}
             </button>
@@ -160,7 +164,7 @@ export function ReviewSession() {
           <button
             type="button"
             onClick={() => setRevealed(true)}
-            className="min-h-14 flex-1 rounded-2xl border border-line bg-surface text-base font-semibold text-ink"
+            className="press min-h-14 flex-1 rounded-xl bg-surface-high text-base font-semibold text-ink"
           >
             {t('reveal')}
           </button>

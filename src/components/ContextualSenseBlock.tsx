@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { Callout, Example, Meta, PanelSection, RetryButton, Skeleton } from '@/components/panel';
 import { ApiError, apiSend, type ApiErrorCode } from '@/lib/api/client';
 import type { TokenUsage } from '@/lib/openrouter/types';
 import type { ContextualSense } from '@/lib/sense/schema';
@@ -27,9 +28,12 @@ type State =
   | { status: 'error'; code: ApiErrorCode };
 
 /**
- * La vraie valeur ajoutée : le sens ICI, pas l'entrée de dictionnaire. Le bloc
- * est indépendant des autres — le LLM est le plus lent des trois et ne doit
- * jamais retarder l'affichage du dictionnaire.
+ * La vraie valeur ajoutée : le sens ICI, pas l'entrée de dictionnaire. C'est
+ * la réponse à la question qu'on vient de poser, donc elle arrive sans
+ * étiquette, juste sous le mot, dans le seul ambre du panneau.
+ *
+ * Le bloc est indépendant des autres : le LLM est le plus lent des trois et ne
+ * doit jamais retarder l'affichage du dictionnaire.
  */
 export function ContextualSenseBlock({
   term,
@@ -69,71 +73,51 @@ export function ContextualSenseBlock({
 
   if (state.status === 'loading') {
     return (
-      <Block title={t('title')}>
-        <div className="flex flex-col gap-2" aria-live="polite" aria-busy="true">
-          <span className="sr-only">{t('loading')}</span>
-          <div className="h-6 w-2/3 animate-pulse rounded bg-surface-high" />
-          <div className="h-4 w-full animate-pulse rounded bg-surface-high" />
-          <div className="h-4 w-4/5 animate-pulse rounded bg-surface-high" />
-        </div>
-      </Block>
+      <PanelSection ariaLabel={t('title')}>
+        <Skeleton label={t('loading')} widths={['w-2/3', 'w-full', 'w-4/5']} />
+      </PanelSection>
     );
   }
 
   if (state.status === 'error') {
     return (
-      <Block title={t('title')}>
+      <PanelSection ariaLabel={t('title')}>
         <p className="text-sm leading-relaxed text-muted">
           {tErrors(`external.${state.code}`, { service: 'OpenRouter' })}
         </p>
         {state.code !== 'missing_key' ? (
-          <button
-            type="button"
-            onClick={retry}
-            className="mt-3 min-h-11 rounded-xl border border-line bg-surface-high px-4 text-sm font-semibold text-ink"
-          >
-            {tErrors('retry')}
-          </button>
+          <RetryButton label={tErrors('retry')} onClick={retry} />
         ) : null}
-      </Block>
+      </PanelSection>
     );
   }
 
   const { sense } = state;
 
   return (
-    <Block title={t('title')}>
-      <p className="text-lg font-semibold leading-snug text-accent">
+    <PanelSection ariaLabel={t('title')}>
+      <p className="text-[1.375rem] font-semibold leading-snug tracking-tight text-accent">
         {sense.traduction_contextuelle}
       </p>
 
-      <div className="mt-2 flex flex-wrap gap-1.5">
-        <Badge>{t(`register.${sense.registre}`)}</Badge>
-        <Badge>{t(`kind.${badgeKey(sense.type)}`)}</Badge>
-      </div>
+      <Meta parts={[t(`register.${sense.registre}`), t(`kind.${badgeKey(sense.type)}`)]} />
 
-      <p className="mt-3 text-[0.95rem] leading-relaxed text-ink">{sense.explication}</p>
+      <p className="mt-3 text-[0.9375rem] leading-relaxed text-ink">{sense.explication}</p>
 
       {sense.note_culturelle ? (
-        <div className="mt-3 rounded-xl border border-line bg-surface-high px-3 py-2.5">
-          <p className="text-xs font-semibold uppercase tracking-wide text-dim">
-            {t('culturalNote')}
-          </p>
-          <p className="mt-1 text-sm leading-relaxed text-muted">{sense.note_culturelle}</p>
-        </div>
+        <Callout label={t('culturalNote')}>{sense.note_culturelle}</Callout>
       ) : null}
 
       {sense.exemples.length > 0 ? (
-        <ul className="mt-3 flex flex-col gap-2">
+        <ul className="mt-4 flex flex-col gap-3">
           {sense.exemples.map((example) => (
-            <li key={example.en} className="border-l-2 border-line pl-2.5">
-              <p className="text-sm leading-relaxed text-ink">{example.en}</p>
-              <p className="text-sm leading-relaxed text-muted">{example.fr}</p>
+            <li key={example.en}>
+              <Example en={example.en} fr={example.fr} />
             </li>
           ))}
         </ul>
       ) : null}
-    </Block>
+    </PanelSection>
   );
 }
 
@@ -149,21 +133,4 @@ const BADGE_KEYS: Record<string, string> = {
 
 function badgeKey(type: string): string {
   return BADGE_KEYS[type] ?? 'literal';
-}
-
-function Badge({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="rounded-full bg-surface-high px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-muted">
-      {children}
-    </span>
-  );
-}
-
-function Block({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="mt-6">
-      <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-dim">{title}</h3>
-      {children}
-    </section>
-  );
 }

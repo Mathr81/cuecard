@@ -19,7 +19,7 @@ const MAX_CANDIDATES = 6;
 
 /** Places garanties à chaque source qui a répondu. Sans elles, shegu ne
  *  compte pas ses téléchargements, passe donc systématiquement derrière
- *  OpenSubtitles, et n'apparaît jamais — alors que c'est précisément l'autre
+ *  OpenSubtitles, et n'apparaît jamais, alors que c'est précisément l'autre
  *  source qu'on veut pouvoir essayer quand la première cale mal. */
 const RESERVED_PER_PROVIDER = 2;
 

@@ -53,7 +53,8 @@
     "rate": "Tarif",
     "ratePerMillion": "{prompt} / M entrée · {completion} / M sortie",
     "unknownModel": "OpenRouter ne connaît pas « {model} ». Il a sans doute été retiré : les appels échoueront tant que OPENROUTER_MODEL n'est pas changé.",
-    "tokensUnit": "jetons"
+    "tokensUnit": "jetons",
+    "never": "aucun appel"
   },
   "errors": {
     "unsupportedFile": "Format non reconnu. Il faut un fichier .srt ou .vtt.",
@@ -145,7 +146,7 @@
       "tv": "Série"
     },
     "pickSeason": "Choisis une saison",
-    "pickEpisode": "Saison {season} — choisis un épisode",
+    "pickEpisode": "Saison {season} : choisis un épisode",
     "episodeCount": "{count, plural, one {# épisode} other {# épisodes}}",
     "historyEmpty": "Aucun titre consulté pour l'instant.",
     "forget": "Retirer de l'historique",

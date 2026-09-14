@@ -40,15 +40,15 @@ export function DefinitionPanel({
   const rememberSense = useCallback((value: ContextualSense) => setSense(value), []);
 
   return (
-    <BottomSheet open={lookup !== null} title={term} subtitle={lookup?.context} onClose={onClose}>
+    <BottomSheet
+      open={lookup !== null}
+      title={term}
+      subtitle={lookup?.context}
+      action={lookup ? <SaveToNotebook key={term} target={lookup.target} sense={sense} /> : null}
+      onClose={onClose}
+    >
       {lookup ? (
-        <PanelBody
-          key={term}
-          lookup={lookup}
-          isExpression={isExpression}
-          sense={sense}
-          onSense={rememberSense}
-        />
+        <PanelBody key={term} lookup={lookup} isExpression={isExpression} onSense={rememberSense} />
       ) : null}
     </BottomSheet>
   );
@@ -57,23 +57,18 @@ export function DefinitionPanel({
 function PanelBody({
   lookup,
   isExpression,
-  sense,
   onSense,
 }: {
   lookup: Lookup;
   isExpression: boolean;
-  sense: ContextualSense | null;
   onSense: (sense: ContextualSense) => void;
 }) {
   return (
-    <>
-      <SaveToNotebook target={lookup.target} sense={sense} />
-      <div className="mt-5 flex flex-col">
-        <ContextualSenseBlock term={lookup.term} context={lookup.scene} onSense={onSense} />
-        <WordEntryBlock term={lookup.term} />
-        <DictionaryBlock term={lookup.term} isExpression={isExpression} />
-        <ExternalLinksBlock term={lookup.term} />
-      </div>
-    </>
+    <div className="mt-2 flex flex-col">
+      <ContextualSenseBlock term={lookup.term} context={lookup.scene} onSense={onSense} />
+      <WordEntryBlock term={lookup.term} />
+      <DictionaryBlock term={lookup.term} isExpression={isExpression} />
+      <ExternalLinksBlock term={lookup.term} />
+    </div>
   );
 }

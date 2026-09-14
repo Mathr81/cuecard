@@ -42,7 +42,7 @@ export function findPricing(payload: unknown, model: string): ModelPricing | nul
 /**
  * Le tarif du modèle en cours. `null` veut dire quelque chose : OpenRouter
  * retire les modèles obsolètes de sa liste, donc un identifiant introuvable
- * est presque toujours un modèle qui n'existe plus — et les appels échoueront.
+ * est presque toujours un modèle qui n'existe plus, et les appels échoueront.
  * L'endpoint est public, aucune clé n'est nécessaire.
  */
 export async function modelPricing(model: string): Promise<ModelPricing | null> {

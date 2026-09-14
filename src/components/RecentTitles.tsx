@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { ICON, X, iconProps } from '@/components/icons';
 import { TitlePoster } from '@/components/TitlePoster';
 import { apiGet, apiSend } from '@/lib/api/client';
 import { episodeLabel, titleKey } from '@/lib/titles/key';
@@ -39,8 +40,8 @@ export function RecentTitles() {
     ).catch(() => undefined);
   }
 
-  if (titles === null) return <div className="h-20 animate-pulse rounded-2xl bg-surface" />;
-  if (titles.length === 0) return <p className="px-1 text-sm text-dim">{t('historyEmpty')}</p>;
+  if (titles === null) return <div className="h-20 animate-pulse rounded-xl bg-surface" />;
+  if (titles.length === 0) return <p className="text-sm text-muted">{t('historyEmpty')}</p>;
 
   return (
     <ul className="flex flex-col gap-2">
@@ -50,7 +51,7 @@ export function RecentTitles() {
         const opened = key === openedKey;
 
         return (
-          <li key={key} className="flex items-stretch gap-2">
+          <li key={key} className="flex items-center gap-1">
             <Link
               href={
                 opened
@@ -59,7 +60,7 @@ export function RecentTitles() {
                     ? `/title/tv/${title.tmdbId}?season=${title.season}&episode=${title.episode}`
                     : `/title/${title.mediaType}/${title.tmdbId}`
               }
-              className="flex min-h-20 min-w-0 flex-1 items-center gap-3 rounded-2xl border border-line bg-surface p-2 pr-4 active:bg-surface-high"
+              className="press flex min-h-20 min-w-0 flex-1 items-center gap-3 rounded-xl bg-surface p-2 pr-4 active:bg-surface-high"
             >
               <TitlePoster path={title.posterPath} alt={title.name} />
               <span className="min-w-0 flex-1">
@@ -71,7 +72,7 @@ export function RecentTitles() {
                     </span>
                   ) : null}
                 </span>
-                <span className="mt-0.5 block truncate text-sm text-muted">
+                <span className="mt-1 block truncate text-sm text-dim">
                   {[label, title.episodeName ?? title.year].filter(Boolean).join(' · ')}
                 </span>
               </span>
@@ -80,9 +81,9 @@ export function RecentTitles() {
               type="button"
               onClick={() => void forget(key)}
               aria-label={t('forget')}
-              className="w-12 shrink-0 rounded-2xl border border-line bg-surface text-xl text-muted"
+              className="press flex size-11 shrink-0 items-center justify-center rounded-xl text-dim"
             >
-              ×
+              <X size={ICON} {...iconProps} />
             </button>
           </li>
         );

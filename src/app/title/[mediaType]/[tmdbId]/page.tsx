@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { ExternalError } from '@/components/ExternalError';
+import { ScreenHeader } from '@/components/ScreenHeader';
 import { SubtitlePicker } from '@/components/SubtitlePicker';
 import { TitlePoster } from '@/components/TitlePoster';
 import { ExternalApiError } from '@/lib/external/errors';
@@ -71,7 +72,7 @@ async function renderMovie(tmdbId: number, language: string) {
       backHref="/"
       poster={movie.posterPath}
     >
-      <h2 className="text-sm font-semibold uppercase tracking-wide text-dim">{t('choose')}</h2>
+      <h2 className="text-[0.8125rem] text-dim">{t('choose')}</h2>
       <SubtitlePicker title={title} />
     </Shell>
   );
@@ -95,7 +96,7 @@ async function renderShow(
             <li key={item.seasonNumber}>
               <Link
                 href={`/title/tv/${tmdbId}?season=${item.seasonNumber}`}
-                className="flex min-h-14 items-center justify-between gap-3 rounded-xl border border-line bg-surface px-4 active:bg-surface-high"
+                className="press flex min-h-14 items-center justify-between gap-3 rounded-xl bg-surface px-4 active:bg-surface-high"
               >
                 <span className="truncate text-base font-medium text-ink">{item.name}</span>
                 <span className="shrink-0 text-sm text-dim">
@@ -124,9 +125,9 @@ async function renderShow(
             <li key={item.episodeNumber}>
               <Link
                 href={`/title/tv/${tmdbId}?season=${season}&episode=${item.episodeNumber}`}
-                className="flex min-h-14 items-center gap-3 rounded-xl border border-line bg-surface px-4 active:bg-surface-high"
+                className="press flex min-h-14 items-center gap-3 rounded-xl bg-surface px-4 active:bg-surface-high"
               >
-                <span className="w-8 shrink-0 font-mono text-sm text-accent">
+                <span className="w-8 shrink-0 font-mono text-sm tabular-nums text-dim">
                   {item.episodeNumber}
                 </span>
                 <span className="truncate text-base text-ink">{item.name}</span>
@@ -160,15 +161,13 @@ async function renderShow(
       backHref={`/title/tv/${tmdbId}?season=${season}`}
       poster={show.posterPath}
     >
-      <h2 className="text-sm font-semibold uppercase tracking-wide text-dim">
-        {tSubtitles('choose')}
-      </h2>
+      <h2 className="text-[0.8125rem] text-dim">{tSubtitles('choose')}</h2>
       <SubtitlePicker title={title} />
     </Shell>
   );
 }
 
-async function Shell({
+function Shell({
   title,
   subtitle,
   backHref,
@@ -181,26 +180,16 @@ async function Shell({
   poster?: string | null;
   children: React.ReactNode;
 }) {
-  const t = await getTranslations('common');
-
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-xl flex-col px-4">
-      <header className="pt-safe flex items-center gap-2 py-3">
-        <Link
-          href={backHref}
-          aria-label={t('back')}
-          className="flex size-11 shrink-0 items-center justify-center rounded-xl text-xl text-muted"
-        >
-          ←
-        </Link>
-        {poster !== undefined ? <TitlePoster path={poster} alt={title} /> : null}
-        <div className="min-w-0 flex-1">
-          <h1 className="truncate text-lg font-bold tracking-tight text-ink">{title}</h1>
-          {subtitle ? <p className="truncate text-sm text-muted">{subtitle}</p> : null}
-        </div>
-      </header>
+      <ScreenHeader
+        title={title}
+        subtitle={subtitle}
+        backHref={backHref}
+        before={poster !== undefined ? <TitlePoster path={poster} alt={title} /> : null}
+      />
 
-      <main className="pb-safe flex flex-1 flex-col gap-3 py-2">{children}</main>
+      <main className="pb-safe flex flex-1 flex-col gap-4 py-2">{children}</main>
     </div>
   );
 }

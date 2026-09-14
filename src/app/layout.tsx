@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from 'next';
+import { GeistMono } from 'geist/font/mono';
+import { GeistSans } from 'geist/font/sans';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { ServiceWorkerRegistrar } from '@/components/ServiceWorkerRegistrar';
@@ -19,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#07080b',
+  themeColor: '#0a0a0b',
   colorScheme: 'dark',
   width: 'device-width',
   initialScale: 1,
@@ -33,7 +35,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const locale = await getLocale();
 
   return (
-    <html lang={locale}>
+    // Les deux fontes sont servies par l'app, pas par Google : le build Docker
+    // n'a rien à télécharger et le rendu ne saute pas au premier affichage.
+    <html lang={locale} className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body className="min-h-dvh bg-night text-ink antialiased">
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
         <ServiceWorkerRegistrar />

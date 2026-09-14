@@ -36,7 +36,7 @@ interface PositionedChip extends WordChip {
  * Affiche une réplique mot par mot. Chaque mot est une cible d'au moins 44px,
  * généreusement espacée : on doit pouvoir viser du pouce, dans le noir, sans
  * zoomer. L'appui long suivi d'un glissement sélectionne une expression
- * entière — indispensable pour les phrasal verbs et les idiomes.
+ * entière, indispensable pour les phrasal verbs et les idiomes.
  */
 export function CueText({ text, selection, onLookup, onSelectingChange }: Props) {
   const lines = useMemo(() => {
@@ -161,7 +161,7 @@ export function CueText({ text, selection, onLookup, onSelectingChange }: Props)
       {lines.map((lineChips, lineIndex) => (
         <p
           key={lineIndex}
-          className="flex flex-wrap justify-center gap-x-1 gap-y-1 text-balance text-center"
+          className="flex flex-wrap justify-center gap-y-0.5 text-balance text-center"
         >
           {lineChips.map((chip) => {
             const selected =
@@ -175,7 +175,9 @@ export function CueText({ text, selection, onLookup, onSelectingChange }: Props)
                 aria-label={chip.word}
                 onPointerDown={(event) => onPointerDown(event, chip.flatIndex)}
                 onContextMenu={(event) => event.preventDefault()}
-                className={`inline-flex min-h-11 touch-pan-y items-center rounded-lg px-1 py-1 transition-colors ${
+                // Sélectionné, le mot est surligné : c'est le seul emploi de
+                // l'accent dans le lecteur, et le geste qu'il traduit.
+                className={`inline-flex min-h-11 touch-pan-y items-center rounded-xl px-1 py-1 transition-colors ${
                   selected ? 'bg-accent/25 text-accent' : ''
                 }`}
               >

@@ -4,7 +4,7 @@ export interface ModelPricing {
   /** Identifiant tel qu'OpenRouter le connaît. */
   model: string;
   displayName: string;
-  /** Prix en dollars par jeton — c'est l'unité qu'emploie OpenRouter. */
+  /** Prix en dollars par jeton : c'est l'unité qu'emploie OpenRouter. */
   promptUsdPerToken: number;
   completionUsdPerToken: number;
 }

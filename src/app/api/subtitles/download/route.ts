@@ -14,7 +14,7 @@ import type { TitleRef } from '@/lib/titles/types';
 const candidateSchema = z.object({
   id: z.string().min(1).max(200),
   provider: z.enum(['opensubtitles', 'shegu']),
-  releaseName: z.string().max(300).default('—'),
+  releaseName: z.string().max(300).default('-'),
   url: z.url().max(2000),
   format: z.enum(['srt', 'vtt']),
   encoding: z.enum(['gzip', 'plain']),

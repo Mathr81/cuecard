@@ -78,7 +78,7 @@ export function SubtitlePicker({ title }: { title: TitleRef }) {
       <div className="flex flex-col gap-2" aria-live="polite">
         <p className="px-1 text-sm text-dim">{t('searching')}</p>
         {[0, 1, 2].map((row) => (
-          <div key={row} className="h-20 animate-pulse rounded-2xl bg-surface" />
+          <div key={row} className="h-20 animate-pulse rounded-xl bg-surface" />
         ))}
       </div>
     );
@@ -96,9 +96,9 @@ export function SubtitlePicker({ title }: { title: TitleRef }) {
   if (state.candidates.length === 0) {
     return (
       <div className="flex flex-col gap-3">
-        <div className="rounded-2xl border border-line bg-surface px-4 py-4">
-          <p className="text-sm text-muted">{t('none')}</p>
-          <p className="mt-1 text-sm text-dim">{t('noneHint')}</p>
+        <div className="rounded-2xl bg-surface px-4 py-4">
+          <p className="text-sm leading-relaxed text-muted">{t('none')}</p>
+          <p className="mt-1.5 text-sm leading-relaxed text-dim">{t('noneHint')}</p>
         </div>
         <UploadFallback />
       </div>
@@ -110,7 +110,7 @@ export function SubtitlePicker({ title }: { title: TitleRef }) {
       {/* Une source muette se dit, plutôt que de laisser croire que la liste
           est complète. */}
       {state.failedProviders.length > 0 ? (
-        <p className="rounded-xl border border-line bg-surface px-4 py-3 text-sm text-muted">
+        <p className="rounded-xl bg-surface px-4 py-3 text-sm leading-relaxed text-muted">
           {t('sourceFailed', {
             sources: state.failedProviders.map((id) => t(`provider.${id}`)).join(', '),
           })}
@@ -124,11 +124,11 @@ export function SubtitlePicker({ title }: { title: TitleRef }) {
               type="button"
               disabled={downloading !== null}
               onClick={() => void choose(candidate)}
-              className="flex min-h-20 w-full flex-col justify-center gap-1 rounded-2xl border border-line bg-surface px-4 py-3 text-left active:bg-surface-high disabled:opacity-50"
+              className="press flex min-h-20 w-full flex-col justify-center gap-1.5 rounded-xl bg-surface px-4 py-3 text-left active:bg-surface-high disabled:opacity-50"
             >
               <span className="flex items-center gap-2">
                 {rank === 0 ? (
-                  <span className="shrink-0 rounded-full bg-accent px-2 py-0.5 text-xs font-semibold text-accent-ink">
+                  <span className="shrink-0 rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-accent-ink">
                     {t('best')}
                   </span>
                 ) : null}
@@ -167,7 +167,7 @@ function UploadFallback() {
   return (
     <Link
       href="/?upload=1"
-      className="flex min-h-14 items-center justify-center rounded-xl border border-line bg-surface px-4 text-sm font-semibold text-ink"
+      className="press flex min-h-14 items-center justify-center rounded-xl bg-surface px-4 text-sm font-semibold text-ink"
     >
       {t('uploadInstead')}
     </Link>

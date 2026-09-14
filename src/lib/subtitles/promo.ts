@@ -1,6 +1,6 @@
 /**
  * Les fichiers d'OpenSubtitles s'ouvrent et se referment souvent sur une
- * réclame — « Support us and become VIP member », « Advertise your product or
+ * réclame : « Support us and become VIP member », « Advertise your product or
  * brand here ». Ce n'est pas du dialogue : la garder mettrait une publicité en
  * première réplique du lecteur et la ferait remonter dans les recherches.
  *

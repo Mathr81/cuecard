@@ -4,7 +4,7 @@ export type SubtitleFormat = 'srt' | 'vtt';
 export type SubtitleEncoding = 'gzip' | 'plain';
 
 export interface SubtitleCandidate {
-  /** `${provider}:${identifiant brut}` — stable d'une recherche à l'autre. */
+  /** `${provider}:${identifiant brut}`, stable d'une recherche à l'autre. */
   id: string;
   provider: 'opensubtitles' | 'shegu';
   /** Nom de release, ou à défaut ce que la source sait donner. */

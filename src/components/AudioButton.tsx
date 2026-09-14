@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { ICON, SpeakerHigh, iconProps } from '@/components/icons';
 
 /**
  * Lire la prononciation sans quitter la feuille. L'élément audio n'est créé
@@ -43,12 +44,10 @@ export function AudioButton({ url, accent }: { url: string; accent: string | nul
       type="button"
       aria-label={t('playAudio')}
       onClick={play}
-      className="flex min-h-11 items-center gap-2 rounded-xl border border-line bg-surface-high px-3 text-sm font-medium text-ink"
+      className="press flex min-h-11 items-center gap-2 rounded-xl bg-surface-high px-3 text-sm font-medium text-ink"
     >
-      <span aria-hidden className={playing ? 'text-accent' : 'text-muted'}>
-        ▶
-      </span>
-      {accent ? <span className="font-mono text-xs uppercase text-muted">{accent}</span> : null}
+      <SpeakerHigh size={ICON} {...iconProps} className={playing ? 'text-accent' : 'text-muted'} />
+      {accent ? <span className="font-mono text-xs uppercase text-dim">{accent}</span> : null}
     </button>
   );
 }

@@ -23,7 +23,7 @@ describe('findPricing', () => {
     });
   });
 
-  it('rend null pour un modèle absent — c’est le signal qu’il a été retiré', () => {
+  it('rend null pour un modèle absent : c’est le signal qu’il a été retiré', () => {
     expect(findPricing(payload, 'google/gemini-2.0-flash-001')).toBeNull();
   });
 
