@@ -93,8 +93,14 @@
     "showLess": "Show less",
     "playAudio": "Play pronunciation",
     "externalLinks": "Elsewhere",
-    "expressionNoEntry": "The English dictionary only indexes single words: it has no entry for an expression.",
+    "expressionNoEntry": "No dictionary has an entry for this expression.",
     "expressionHint": "The “meaning in context” block below is made for this, and WordReference also covers expressions and phrasal verbs.",
+    "sourceLabel": "Source:",
+    "sources": {
+      "freedictionary": "Wiktionary, via freedictionaryapi.com",
+      "dictionaryapi": "dictionaryapi.dev",
+      "datamuse": "Datamuse"
+    },
     "partOfSpeech": {
       "noun": "noun",
       "verb": "verb",
@@ -112,7 +118,11 @@
       "abbreviation": "abbreviation",
       "phrase": "phrase",
       "prefix": "prefix",
-      "suffix": "suffix"
+      "suffix": "suffix",
+      "contraction": "contraction",
+      "name": "proper noun",
+      "proverb": "proverb",
+      "symbol": "symbol"
     }
   },
   "titles": {

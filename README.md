@@ -275,12 +275,30 @@ cesse d'interpréter le glissement comme un changement de réplique.
 mobile, fermable au balayage vers le bas, à la croix, au fond ou à Échap ;
 panneau latéral sur desktop. Toujours monté, donc les deux sens s'animent.
 
-**Dictionnaire** (`/api/dictionary/[word]`) — appel serveur vers
-dictionaryapi.dev, validé par zod et normalisé : phonétique, bouton audio,
-définitions regroupées par nature grammaticale, exemples, synonymes. Les
-formes fléchies sont rattrapées côté serveur (`running` → `run`,
-`chances` → `chance`, `wolves` → `wolf`) et la feuille dit quelle forme a
-répondu. Résultats mis en cache côté serveur et côté client.
+**Dictionnaire** (`/api/dictionary/[word]`) — appel serveur vers **trois
+sources**, interrogées dans l'ordre, la suivante ne servant que si la
+précédente tombe. Chacune est validée par zod et ramenée à la même forme :
+phonétique, définitions regroupées par nature grammaticale, exemples,
+synonymes, et le bouton audio quand la source en fournit un.
+
+| source           | ce qu'elle apporte                                                                                                   | pourquoi ce rang                                                 |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `freedictionary` | Wiktionary via freedictionaryapi.com : API phonétique, exemples, expressions et formes fléchies résolues à la source | répond en ~0,2 s, sans clé                                       |
+| `datamuse`       | définitions plus sèches, sans phonétique ni exemples                                                                 | hébergement indépendant des deux autres : c'est tout son intérêt |
+| `dictionaryapi`  | la seule à donner un enregistrement audio                                                                            | une dizaine de secondes par appel et des 5xx fréquents           |
+
+`DICTIONARY_SOURCES` change cet ordre — mettre `dictionaryapi` en tête pour
+privilégier l'audio. `FREEDICTIONARY_API_URL`, `DATAMUSE_API_URL` et
+`DICTIONARY_API_URL` visent un miroir auto-hébergé.
+
+Les formes fléchies sont rattrapées côté serveur (`running` → `run`,
+`chances` → `chance`, `wolves` → `wolf`) : quand une source ne répond qu'un
+renvoi — « plural of wolf » —, la forme de base est demandée à son tour, et la
+feuille dit quelle forme a répondu. La définition affichée porte le nom de sa
+source, la licence CC BY-SA de Wiktionary demandant d'être citée. Deux
+« inconnu » fermes suffisent à conclure qu'un mot n'existe pas : inutile
+d'attendre la source la plus lente sur un prénom. Résultats mis en cache côté
+serveur et côté client.
 
 **Liens externes** — WordReference, Youglish, Wiktionary. De simples liens,
 aucun scraping.

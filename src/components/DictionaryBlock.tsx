@@ -8,6 +8,7 @@ import type {
   DictionaryEntry,
   DictionaryErrorCode,
   DictionaryMeaning,
+  DictionarySource,
 } from '@/lib/dictionary/types';
 
 /** Natures grammaticales traduites ; toute autre valeur est affichée telle quelle. */
@@ -29,6 +30,10 @@ const KNOWN_PARTS_OF_SPEECH = [
   'phrase',
   'prefix',
   'suffix',
+  'contraction',
+  'name',
+  'proverb',
+  'symbol',
 ] as const;
 
 const VISIBLE_DEFINITIONS = 3;
@@ -47,8 +52,6 @@ export function DictionaryBlock({ term, isExpression }: { term: string; isExpres
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    if (isExpression) return;
-
     const controller = new AbortController();
 
     lookupWord(term, controller.signal)
@@ -62,23 +65,12 @@ export function DictionaryBlock({ term, isExpression }: { term: string; isExpres
       });
 
     return () => controller.abort();
-  }, [term, isExpression, attempt]);
+  }, [term, attempt]);
 
   const retry = useCallback(() => {
     setState({ status: 'loading' });
     setAttempt((value) => value + 1);
   }, []);
-
-  if (isExpression) {
-    // Le dictionnaire monolingue n'indexe que des mots : le dire franchement
-    // vaut mieux qu'une erreur 404 déguisée.
-    return (
-      <Block title={t('dictionary')}>
-        <p className="text-sm leading-relaxed text-muted">{t('expressionNoEntry')}</p>
-        <p className="mt-2 text-sm leading-relaxed text-dim">{t('expressionHint')}</p>
-      </Block>
-    );
-  }
 
   if (state.status === 'loading') {
     return (
@@ -95,15 +87,20 @@ export function DictionaryBlock({ term, isExpression }: { term: string; isExpres
 
   if (state.status === 'error') {
     const isMissing = state.code === 'not_found';
+    const missingMessage = isExpression
+      ? t('expressionNoEntry')
+      : tErrors('dictionaryNotFound', { word: term });
+    const missingHint = isExpression ? t('expressionHint') : tErrors('dictionaryNotFoundHint');
+
     return (
       <Block title={t('dictionary')}>
         <p className="text-sm leading-relaxed text-muted">
           {isMissing
-            ? tErrors('dictionaryNotFound', { word: term })
+            ? missingMessage
             : tErrors(state.code === 'network' ? 'dictionaryNetwork' : 'dictionaryUpstream')}
         </p>
         <p className="mt-2 text-sm leading-relaxed text-dim">
-          {isMissing ? tErrors('dictionaryNotFoundHint') : tErrors('dictionaryRetryHint')}
+          {isMissing ? missingHint : tErrors('dictionaryRetryHint')}
         </p>
         {!isMissing ? (
           <button
@@ -141,7 +138,35 @@ export function DictionaryBlock({ term, isExpression }: { term: string; isExpres
           <MeaningSection key={meaning.partOfSpeech} meaning={meaning} />
         ))}
       </div>
+
+      <SourceNote source={entry.source} />
     </Block>
+  );
+}
+
+/** Dire d'où vient la définition : les sources ne se valent pas, et celles
+ *  tirées de Wiktionary sont sous licence CC BY-SA, qui demande d'être citée. */
+function SourceNote({ source }: { source: DictionarySource }) {
+  const t = useTranslations('definition');
+  const name = t(`sources.${source.id}`);
+  const label = source.license ? `${name} · ${source.license}` : name;
+
+  return (
+    <p className="mt-5 border-t border-line pt-3 text-xs text-dim">
+      {t('sourceLabel')}{' '}
+      {source.url ? (
+        <a
+          href={source.url}
+          target="_blank"
+          rel="noreferrer"
+          className="underline underline-offset-2"
+        >
+          {label}
+        </a>
+      ) : (
+        label
+      )}
+    </p>
   );
 }
 

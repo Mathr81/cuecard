@@ -93,8 +93,14 @@
     "showLess": "Réduire",
     "playAudio": "Écouter la prononciation",
     "externalLinks": "Ailleurs",
-    "expressionNoEntry": "Le dictionnaire anglais n'indexe que des mots seuls : il n'a pas d'entrée pour une expression.",
+    "expressionNoEntry": "Aucun dictionnaire n'a d'entrée pour cette expression.",
     "expressionHint": "Le bloc « sens en contexte » ci-dessous est fait pour ça, et WordReference couvre aussi les expressions et les phrasal verbs.",
+    "sourceLabel": "Source :",
+    "sources": {
+      "freedictionary": "Wiktionary, via freedictionaryapi.com",
+      "dictionaryapi": "dictionaryapi.dev",
+      "datamuse": "Datamuse"
+    },
     "partOfSpeech": {
       "noun": "nom",
       "verb": "verbe",
@@ -112,7 +118,11 @@
       "abbreviation": "abréviation",
       "phrase": "locution",
       "prefix": "préfixe",
-      "suffix": "suffixe"
+      "suffix": "suffixe",
+      "contraction": "contraction",
+      "name": "nom propre",
+      "proverb": "proverbe",
+      "symbol": "symbole"
     }
   },
   "titles": {

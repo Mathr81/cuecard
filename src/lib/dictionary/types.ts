@@ -1,3 +1,14 @@
+/** Les sources interrogées, dans l'ordre où elles sont essayées par défaut. */
+export type DictionarySourceId = 'freedictionary' | 'dictionaryapi' | 'datamuse';
+
+export interface DictionarySource {
+  id: DictionarySourceId;
+  /** La page d'origine de l'entrée, quand la source la donne. */
+  url: string | null;
+  /** Le nom de la licence, à afficher : Wiktionary est en CC BY-SA. */
+  license: string | null;
+}
+
 export interface DictionaryDefinition {
   text: string;
   example: string | null;
@@ -18,7 +29,7 @@ export interface DictionaryEntry {
   phonetic: string | null;
   audio: { url: string; accent: string | null } | null;
   meanings: DictionaryMeaning[];
-  sourceUrls: string[];
+  source: DictionarySource;
 }
 
 export type DictionaryErrorCode = 'not_found' | 'upstream' | 'invalid_response' | 'network';

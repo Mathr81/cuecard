@@ -113,6 +113,10 @@ export function normalizeDictionaryResponse(
     phonetic: pickPhonetic(entries),
     audio: pickAudio(entries),
     meanings,
-    sourceUrls: unique(entries.flatMap((entry) => entry.sourceUrls ?? [])).slice(0, 3),
+    source: {
+      id: 'dictionaryapi',
+      url: unique(entries.flatMap((entry) => entry.sourceUrls ?? []))[0] ?? null,
+      license: null,
+    },
   };
 }
