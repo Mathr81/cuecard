@@ -1,3 +1,6 @@
 .next
 node_modules
 package-lock.json
+
+# skill de design installée par npx skills add : contenu tiers, non reformaté
+.agents
