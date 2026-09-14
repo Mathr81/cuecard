@@ -191,7 +191,7 @@ describe('searchSubtitles', () => {
   }
 
   it('classe par nombre de téléchargements, ceux qui n’en ont pas à la fin', async () => {
-    const results = await searchSubtitles(movie, [
+    const { candidates } = await searchSubtitles(movie, [
       provider('opensubtitles', [
         candidate({ id: 'a', url: 'https://x/a', downloadCount: 10 }),
         candidate({ id: 'b', url: 'https://x/b', downloadCount: 900 }),
@@ -199,16 +199,59 @@ describe('searchSubtitles', () => {
       provider('shegu', [candidate({ id: 'c', url: 'https://x/c', provider: 'shegu' })]),
     ]);
 
-    expect(results.map((r) => r.id)).toEqual(['b', 'a', 'c']);
+    expect(candidates.map((r) => r.id)).toEqual(['b', 'a', 'c']);
   });
 
-  it('garde les résultats d’une source quand l’autre tombe', async () => {
-    const results = await searchSubtitles(movie, [
+  it('garde une place à shegu, que ses résultats sans compteur perdraient toujours', async () => {
+    // Huit résultats OpenSubtitles mieux notés : sans réservation, aucun shegu
+    // n'atteindrait la liste.
+    const fromOpenSubtitles = Array.from({ length: 8 }, (_, index) =>
+      candidate({ id: `os${index}`, url: `https://x/os${index}`, downloadCount: 900 - index })
+    );
+    const fromShegu = Array.from({ length: 3 }, (_, index) =>
+      candidate({ id: `sh${index}`, url: `https://x/sh${index}`, provider: 'shegu' })
+    );
+
+    const { candidates } = await searchSubtitles(movie, [
+      provider('opensubtitles', fromOpenSubtitles),
+      provider('shegu', fromShegu),
+    ]);
+
+    expect(candidates).toHaveLength(6);
+    expect(candidates.filter((c) => c.provider === 'shegu')).toHaveLength(2);
+    // L'ordre général est rétabli : les mieux notés d'abord, shegu au bout.
+    expect(candidates.map((c) => c.provider)).toEqual([
+      'opensubtitles',
+      'opensubtitles',
+      'opensubtitles',
+      'opensubtitles',
+      'shegu',
+      'shegu',
+    ]);
+  });
+
+  it('ne réserve rien à une source qui n’a rien renvoyé', async () => {
+    const fromOpenSubtitles = Array.from({ length: 8 }, (_, index) =>
+      candidate({ id: `os${index}`, url: `https://x/os${index}`, downloadCount: 900 - index })
+    );
+
+    const { candidates } = await searchSubtitles(movie, [
+      provider('opensubtitles', fromOpenSubtitles),
+      provider('shegu', []),
+    ]);
+
+    expect(candidates).toHaveLength(6);
+    expect(candidates.every((c) => c.provider === 'opensubtitles')).toBe(true);
+  });
+
+  it('garde les résultats d’une source quand l’autre tombe, et le signale', async () => {
+    const { candidates, failedProviders } = await searchSubtitles(movie, [
       provider('opensubtitles', new Error('502')),
       provider('shegu', [candidate({ id: 'c', provider: 'shegu' })]),
     ]);
 
-    expect(results.map((r) => r.id)).toEqual(['c']);
+    expect(candidates.map((r) => r.id)).toEqual(['c']);
+    expect(failedProviders).toEqual(['opensubtitles']);
   });
 
   it('ne signale une panne que si toutes les sources tombent', async () => {
@@ -223,20 +266,20 @@ describe('searchSubtitles', () => {
   it('distingue « aucun sous-titre » d’une panne', async () => {
     await expect(
       searchSubtitles(movie, [provider('opensubtitles', []), provider('shegu', [])])
-    ).resolves.toEqual([]);
+    ).resolves.toEqual({ candidates: [], failedProviders: [] });
   });
 
   it('dédoublonne sur l’URL et plafonne la liste', async () => {
     const many = Array.from({ length: 9 }, (_, index) =>
       candidate({ id: `n${index}`, url: `https://x/${index}`, downloadCount: 100 - index })
     );
-    const results = await searchSubtitles(movie, [
+    const { candidates } = await searchSubtitles(movie, [
       provider('opensubtitles', many),
       provider('shegu', [candidate({ id: 'dup', url: 'https://x/0', provider: 'shegu' })]),
     ]);
 
-    expect(results).toHaveLength(6);
-    expect(results.filter((r) => r.url === 'https://x/0')).toHaveLength(1);
+    expect(candidates).toHaveLength(6);
+    expect(candidates.filter((r) => r.url === 'https://x/0')).toHaveLength(1);
   });
 });
 

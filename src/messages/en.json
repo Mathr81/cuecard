@@ -41,15 +41,19 @@
     "contentLanguageHelp": "The language of the model's translations and explanations. Set it to English for full immersion.",
     "french": "Français",
     "english": "English",
-    "tokens": "Tokens used",
-    "tokensHelp": "Since the last reset, on this device.",
+    "tokens": "Usage",
+    "tokensHelp": "Since the last reset, on this device. Rates come from OpenRouter.",
     "tokensBreakdown": "{prompt, number} in · {completion, number} out",
     "tokensCalls": "Paid calls",
     "tokensCached": "Served from cache",
     "tokensSince": "Since",
     "tokensReset": "Reset the counter",
     "model": "Model",
-    "missingOpenRouterKey": "OPENROUTER_API_KEY is not set: contextual meaning will not work."
+    "missingOpenRouterKey": "OPENROUTER_API_KEY is not set: contextual meaning will not work.",
+    "rate": "Rate",
+    "ratePerMillion": "{prompt} / M in · {completion} / M out",
+    "unknownModel": "OpenRouter does not know “{model}”. It was most likely retired: calls will fail until OPENROUTER_MODEL is changed.",
+    "tokensUnit": "tokens"
   },
   "errors": {
     "unsupportedFile": "Unrecognised format. An .srt or .vtt file is required.",
@@ -143,7 +147,8 @@
     "provider": {
       "opensubtitles": "OpenSubtitles",
       "shegu": "shegu"
-    }
+    },
+    "sourceFailed": "{sources} did not answer: the list only shows the other source."
   },
   "timing": {
     "gotoButton": "Go to time",

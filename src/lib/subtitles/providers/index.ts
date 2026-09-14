@@ -17,6 +17,18 @@ export const SUBTITLE_PROVIDERS: readonly SubtitleProvider[] = [
  *  pour rester lisible d'un coup d'œil sur un téléphone. */
 const MAX_CANDIDATES = 6;
 
+/** Places garanties à chaque source qui a répondu. Sans elles, shegu ne
+ *  compte pas ses téléchargements, passe donc systématiquement derrière
+ *  OpenSubtitles, et n'apparaît jamais — alors que c'est précisément l'autre
+ *  source qu'on veut pouvoir essayer quand la première cale mal. */
+const RESERVED_PER_PROVIDER = 2;
+
+export interface SubtitleSearchResult {
+  candidates: SubtitleCandidate[];
+  /** Sources qui n'ont pas répondu, pour le dire au lieu de faire comme si. */
+  failedProviders: string[];
+}
+
 /**
  * Deux sources valent mieux qu'une : OpenSubtitles a les noms de release et
  * les compteurs de téléchargement, shegu répond là où l'autre ne trouve rien.
@@ -26,13 +38,14 @@ export async function searchSubtitles(
   lookup: SubtitleLookup,
   providers: readonly SubtitleProvider[] = SUBTITLE_PROVIDERS,
   signal?: AbortSignal
-): Promise<SubtitleCandidate[]> {
+): Promise<SubtitleSearchResult> {
   const settled = await Promise.allSettled(
     providers.map((provider) => provider.search(lookup, signal))
   );
 
   const candidates: SubtitleCandidate[] = [];
-  const failures: string[] = [];
+  const failedProviders: string[] = [];
+  const reasons: string[] = [];
 
   settled.forEach((outcome, index) => {
     if (outcome.status === 'fulfilled' && Array.isArray(outcome.value)) {
@@ -40,15 +53,41 @@ export async function searchSubtitles(
       return;
     }
     const reason = outcome.status === 'rejected' ? outcome.reason : 'non-array result';
-    failures.push(`${providers[index].id}: ${reason instanceof Error ? reason.message : reason}`);
+    failedProviders.push(providers[index].id);
+    reasons.push(`${providers[index].id}: ${reason instanceof Error ? reason.message : reason}`);
   });
 
   // Toutes les sources muettes : c'est une panne, pas un titre sans sous-titres.
-  if (candidates.length === 0 && failures.length === providers.length && providers.length > 0) {
-    throw new ExternalApiError('upstream', failures.join(' | '));
+  if (candidates.length === 0 && reasons.length === providers.length && providers.length > 0) {
+    throw new ExternalApiError('upstream', reasons.join(' | '));
   }
 
-  return rank(dedupe(candidates)).slice(0, MAX_CANDIDATES);
+  return { candidates: select(rank(dedupe(candidates))), failedProviders };
+}
+
+/**
+ * Garde une place à chaque source avant de remplir au classement, puis rétablit
+ * l'ordre général : les mieux notés d'abord, l'autre source visible au bout.
+ */
+function select(ranked: readonly SubtitleCandidate[]): SubtitleCandidate[] {
+  const position = new Map(ranked.map((candidate, index) => [candidate.id, index]));
+  const chosen = new Map<string, SubtitleCandidate>();
+  const takenPerProvider = new Map<string, number>();
+
+  for (const candidate of ranked) {
+    if (chosen.size >= MAX_CANDIDATES) break;
+    const taken = takenPerProvider.get(candidate.provider) ?? 0;
+    if (taken >= RESERVED_PER_PROVIDER) continue;
+    chosen.set(candidate.id, candidate);
+    takenPerProvider.set(candidate.provider, taken + 1);
+  }
+
+  for (const candidate of ranked) {
+    if (chosen.size >= MAX_CANDIDATES) break;
+    if (!chosen.has(candidate.id)) chosen.set(candidate.id, candidate);
+  }
+
+  return [...chosen.values()].sort((a, b) => (position.get(a.id) ?? 0) - (position.get(b.id) ?? 0));
 }
 
 function dedupe(candidates: readonly SubtitleCandidate[]): SubtitleCandidate[] {

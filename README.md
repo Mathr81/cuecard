@@ -27,9 +27,10 @@ sous-titres ne demandent aucune clé** : ils viennent de sources ouvertes, sans
 quota journalier. Sans clés du tout, le chargement manuel d'un `.srt` et le
 dictionnaire fonctionnent toujours, et chaque écran dit ce qui manque.
 
-`OPENROUTER_MODEL` choisit le modèle ; la valeur par défaut est un point de
-départ rapide et bon marché, à changer selon ce qui est disponible. Le modèle
-en cours est affiché dans les réglages.
+`OPENROUTER_MODEL` choisit le modèle. Les réglages affichent celui qui sert,
+son tarif, et disent franchement si OpenRouter ne le connaît pas — ce qui
+arrive : les identifiants disparaissent quand un modèle est retiré, et les
+appels échouent alors sans autre explication.
 
 ## Déployer avec Docker
 
@@ -208,8 +209,10 @@ expliqué ne coûte rien et ne fait rien attendre.
 indépendamment : app en français et explications en anglais pour un mode
 immersion totale, ou l'inverse.
 
-**Compteur de jetons** — dans les réglages : total, entrée / sortie, appels
-payés, appels servis par le cache, et depuis quand. Remise à zéro d'un bouton.
+**Compteur de consommation** — dans les réglages : le montant en dollars, le
+détail en jetons entrée / sortie, les appels payés, ceux servis par le cache,
+et depuis quand. Le tarif du modèle vient de l'API publique d'OpenRouter, mise
+en cache une journée. Remise à zéro d'un bouton.
 
 ## Ce que fait l'étape 3
 
@@ -233,7 +236,10 @@ quota journalier :
 L'échec de l'une n'efface jamais les résultats de l'autre ; il faut que les
 deux tombent pour parler de panne. Les candidats sont dédoublonnés, classés
 par nombre de téléchargements — ceux qui n'en ont pas passent derrière — et
-les six premiers sont proposés avec leur source. Chaque fichier téléchargé est
+les six premiers sont proposés avec leur source — deux places étant réservées
+à chacune, sans quoi shegu, qui ne compte pas ses téléchargements, passerait
+systématiquement derrière et n'apparaîtrait jamais. Une source qui n'a pas
+répondu est signalée, plutôt que de laisser croire que la liste est complète. Chaque fichier téléchargé est
 mis en cache en base : on ne redemande jamais deux fois la même chose à des
 services qu'on ne paie pas.
 

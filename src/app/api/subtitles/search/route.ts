@@ -9,15 +9,15 @@ export async function POST(request: Request) {
 
   const title = parsed.data;
   try {
-    return NextResponse.json({
-      candidates: await searchSubtitles({
+    return NextResponse.json(
+      await searchSubtitles({
         mediaType: title.mediaType,
         tmdbId: title.tmdbId,
         imdbId: title.imdbId,
         season: title.season,
         episode: title.episode,
-      }),
-    });
+      })
+    );
   } catch (cause) {
     return errorResponse(cause);
   }

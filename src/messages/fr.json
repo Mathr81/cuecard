@@ -41,15 +41,19 @@
     "contentLanguageHelp": "La langue des traductions et des explications du modèle. Mets l'anglais pour un mode immersion totale.",
     "french": "Français",
     "english": "English",
-    "tokens": "Jetons consommés",
-    "tokensHelp": "Depuis la dernière remise à zéro, sur cet appareil.",
+    "tokens": "Consommation",
+    "tokensHelp": "Depuis la dernière remise à zéro, sur cet appareil. Le tarif vient d'OpenRouter.",
     "tokensBreakdown": "{prompt, number} en entrée · {completion, number} en sortie",
     "tokensCalls": "Appels payés",
     "tokensCached": "Servis par le cache",
     "tokensSince": "Depuis le",
     "tokensReset": "Remettre le compteur à zéro",
     "model": "Modèle",
-    "missingOpenRouterKey": "OPENROUTER_API_KEY n'est pas renseignée : le sens en contexte ne fonctionnera pas."
+    "missingOpenRouterKey": "OPENROUTER_API_KEY n'est pas renseignée : le sens en contexte ne fonctionnera pas.",
+    "rate": "Tarif",
+    "ratePerMillion": "{prompt} / M entrée · {completion} / M sortie",
+    "unknownModel": "OpenRouter ne connaît pas « {model} ». Il a sans doute été retiré : les appels échoueront tant que OPENROUTER_MODEL n'est pas changé.",
+    "tokensUnit": "jetons"
   },
   "errors": {
     "unsupportedFile": "Format non reconnu. Il faut un fichier .srt ou .vtt.",
@@ -143,7 +147,8 @@
     "provider": {
       "opensubtitles": "OpenSubtitles",
       "shegu": "shegu"
-    }
+    },
+    "sourceFailed": "{sources} n'a pas répondu : la liste ne montre que l'autre source."
   },
   "timing": {
     "gotoButton": "Aller au temps",

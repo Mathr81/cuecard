@@ -47,19 +47,13 @@ export const useTokenStore = create<TokenState>()(
     }),
     {
       name: 'cuecard.tokens',
-      storage: createJSONStorage(() =>
-        typeof localStorage === 'undefined' ? undefinedStorage : localStorage
-      ),
+      // `createJSONStorage` attrape lui-même l'absence de localStorage côté
+      // serveur et désactive la persistance : un repli maison n'apporte rien,
+      // et référencer le magasin depuis `onRehydrateStorage` ne marche pas non
+      // plus — avec un stockage synchrone, la réhydratation a lieu pendant
+      // `create()`, donc avant que la constante n'existe. Le drapeau
+      // d'hydratation vient de `useIsHydrated`, côté composant.
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );
-
-/** Côté serveur il n'y a rien à lire ni à écrire, mais l'interface doit exister. */
-const undefinedStorage: Storage = {
-  length: 0,
-  clear: () => undefined,
-  getItem: () => null,
-  key: () => null,
-  removeItem: () => undefined,
-  setItem: () => undefined,
-};

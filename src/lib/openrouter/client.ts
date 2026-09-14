@@ -1,4 +1,5 @@
 import 'server-only';
+import { envOr } from '@/lib/env';
 import { ExternalApiError } from '@/lib/external/errors';
 import { fetchJson } from '@/lib/external/fetchJson';
 import { buildMessages, type ChatMessage, type SenseRequest } from '@/lib/sense/prompt';
@@ -12,8 +13,10 @@ import {
 
 const ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
 
-/** Un modèle rapide et bon marché par défaut ; OPENROUTER_MODEL le remplace. */
-const DEFAULT_MODEL = 'google/gemini-2.0-flash-001';
+/** Un modèle rapide et bon marché par défaut ; OPENROUTER_MODEL le remplace.
+ *  Les identifiants OpenRouter disparaissent quand un modèle est retiré : les
+ *  réglages affichent celui qui sert et son tarif, pour le voir tout de suite. */
+const DEFAULT_MODEL = 'google/gemini-2.5-flash-lite';
 
 /** Une explication tient en quelques phrases : pas la peine de payer plus. */
 const MAX_TOKENS = 700;
@@ -27,7 +30,7 @@ export interface SenseResult {
 }
 
 export function senseModel(): string {
-  return process.env.OPENROUTER_MODEL?.trim() || DEFAULT_MODEL;
+  return envOr('OPENROUTER_MODEL', DEFAULT_MODEL);
 }
 
 interface CompletionResponse {

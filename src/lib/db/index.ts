@@ -1,9 +1,10 @@
 import Database from 'better-sqlite3';
 import { mkdirSync } from 'node:fs';
 import path from 'node:path';
+import { optionalEnv } from '@/lib/env';
 
 /** Sur le VPS, le fichier vit à côté de l'app ; en test, chaque suite a le sien. */
-const DB_PATH = process.env.CUECARD_DB_PATH ?? path.join(process.cwd(), '.data', 'cuecard.db');
+const DB_PATH = optionalEnv('CUECARD_DB_PATH') ?? path.join(process.cwd(), '.data', 'cuecard.db');
 
 let instance: Database.Database | null = null;
 

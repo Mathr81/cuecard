@@ -11,9 +11,14 @@ import type { SubtitleCandidate } from '@/lib/subtitles/providers/types';
 import type { TitleRef } from '@/lib/titles/types';
 import { useSubtitleStore } from '@/store/subtitles';
 
+interface SearchResponse {
+  candidates: SubtitleCandidate[];
+  failedProviders: string[];
+}
+
 type State =
   | { status: 'loading' }
-  | { status: 'ready'; candidates: SubtitleCandidate[] }
+  | { status: 'ready'; candidates: SubtitleCandidate[]; failedProviders: string[] }
   | { status: 'error'; code: ApiErrorCode };
 
 export function SubtitlePicker({ title }: { title: TitleRef }) {
@@ -29,13 +34,14 @@ export function SubtitlePicker({ title }: { title: TitleRef }) {
   useEffect(() => {
     const controller = new AbortController();
 
-    apiSend<{ candidates: SubtitleCandidate[] }>(
-      '/api/subtitles/search',
-      'POST',
-      title,
-      controller.signal
-    )
-      .then((data) => setState({ status: 'ready', candidates: data.candidates }))
+    apiSend<SearchResponse>('/api/subtitles/search', 'POST', title, controller.signal)
+      .then((data) =>
+        setState({
+          status: 'ready',
+          candidates: data.candidates,
+          failedProviders: data.failedProviders,
+        })
+      )
       .catch((cause: unknown) => {
         if (controller.signal.aborted) return;
         setState({ status: 'error', code: cause instanceof ApiError ? cause.code : 'upstream' });
@@ -101,6 +107,16 @@ export function SubtitlePicker({ title }: { title: TitleRef }) {
 
   return (
     <div className="flex flex-col gap-3">
+      {/* Une source muette se dit, plutôt que de laisser croire que la liste
+          est complète. */}
+      {state.failedProviders.length > 0 ? (
+        <p className="rounded-xl border border-line bg-surface px-4 py-3 text-sm text-muted">
+          {t('sourceFailed', {
+            sources: state.failedProviders.map((id) => t(`provider.${id}`)).join(', '),
+          })}
+        </p>
+      ) : null}
+
       <ul className="flex flex-col gap-2">
         {state.candidates.map((candidate, rank) => (
           <li key={candidate.id}>

@@ -4,11 +4,13 @@ import { SettingsScreen } from '@/components/SettingsScreen';
 import { contentLocale } from '@/i18n/content';
 import { isLocale } from '@/i18n/config';
 import { senseModel } from '@/lib/openrouter/client';
+import { modelPricing } from '@/lib/openrouter/pricing';
 
 export default async function SettingsPage() {
   const t = await getTranslations('settings');
   const tCommon = await getTranslations('common');
   const uiLocale = await getLocale();
+  const model = senseModel();
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-xl flex-col px-4">
@@ -27,7 +29,8 @@ export default async function SettingsPage() {
         <SettingsScreen
           uiLocale={isLocale(uiLocale) ? uiLocale : 'fr'}
           senseLocale={await contentLocale()}
-          model={senseModel()}
+          model={model}
+          pricing={await modelPricing(model)}
           hasOpenRouterKey={Boolean(process.env.OPENROUTER_API_KEY?.trim())}
         />
       </main>

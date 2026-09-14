@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
+import { envOr } from '@/lib/env';
 import { candidateForms } from '@/lib/dictionary/lemma';
 import { normalizeDictionaryResponse } from '@/lib/dictionary/normalize';
 import type { DictionaryEntry } from '@/lib/dictionary/types';
 
 /** Surchargeable pour viser un miroir auto-hébergé de l'API : la publique
  *  limite le débit et tombe régulièrement. */
-const UPSTREAM =
-  process.env.DICTIONARY_API_URL ?? 'https://api.dictionaryapi.dev/api/v2/entries/en';
+const UPSTREAM = envOr('DICTIONARY_API_URL', 'https://api.dictionaryapi.dev/api/v2/entries/en');
 const ONE_WEEK_SECONDS = 60 * 60 * 24 * 7;
 const REQUEST_TIMEOUT_MS = 8000;
 
