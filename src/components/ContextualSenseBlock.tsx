@@ -5,7 +5,6 @@ import { useTranslations } from 'next-intl';
 import { ApiError, apiSend, type ApiErrorCode } from '@/lib/api/client';
 import type { TokenUsage } from '@/lib/openrouter/types';
 import type { ContextualSense } from '@/lib/sense/schema';
-import { useTokenStore } from '@/store/tokens';
 
 export interface SenseContext {
   lines: string[];
@@ -44,8 +43,6 @@ export function ContextualSenseBlock({
 }) {
   const t = useTranslations('sense');
   const tErrors = useTranslations('errors');
-  const record = useTokenStore((state) => state.record);
-
   const [state, setState] = useState<State>({ status: 'loading' });
   const [attempt, setAttempt] = useState(0);
 
@@ -54,7 +51,6 @@ export function ContextualSenseBlock({
 
     apiSend<Response>('/api/sense', 'POST', { term, ...context }, controller.signal)
       .then((data) => {
-        record(data.usage, data.cached);
         setState({ status: 'ready', sense: data.sense, cached: data.cached });
         onSense?.(data.sense);
       })
@@ -64,7 +60,7 @@ export function ContextualSenseBlock({
       });
 
     return () => controller.abort();
-  }, [term, context, record, onSense, attempt]);
+  }, [term, context, onSense, attempt]);
 
   const retry = useCallback(() => {
     setState({ status: 'loading' });

@@ -211,8 +211,11 @@ immersion totale, ou l'inverse.
 
 **Compteur de consommation** — dans les réglages : le montant en dollars, le
 détail en jetons entrée / sortie, les appels payés, ceux servis par le cache,
-et depuis quand. Le tarif du modèle vient de l'API publique d'OpenRouter, mise
-en cache une journée. Remise à zéro d'un bouton.
+et depuis quand. Le journal vit en base, côté serveur : c'est la même
+consommation depuis le téléphone, le portable ou n'importe quelle session — la
+dépense est celle du serveur, pas celle d'un navigateur. Le tarif du modèle
+vient de l'API publique d'OpenRouter, mise en cache une journée. Remise à zéro
+d'un bouton.
 
 ## Ce que fait l'étape 3
 

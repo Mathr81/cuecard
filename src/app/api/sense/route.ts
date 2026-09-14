@@ -6,6 +6,9 @@ import { requestSense, senseModel } from '@/lib/openrouter/client';
 import { senseCacheKey, type SenseRequest } from '@/lib/sense/prompt';
 import { senseSchema } from '@/lib/sense/schema';
 import { contentLocale } from '@/i18n/content';
+import { recordUsage } from '@/lib/usage/repository';
+
+const EMPTY_USAGE = { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
 
 const bodySchema = z.object({
   term: z.string().min(1).max(120),
@@ -29,15 +32,18 @@ export async function POST(request: Request) {
     // Recliquer sur un mot déjà expliqué ne doit rien coûter ni rien attendre.
     const hit = senseSchema.safeParse(cachedSense(cacheKey));
     if (hit.success) {
+      // Compté aussi, à zéro jeton : c'est ce que le cache fait gagner.
+      recordUsage({ model, usage: EMPTY_USAGE, cached: true });
       return NextResponse.json({
         sense: hit.data,
-        usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+        usage: EMPTY_USAGE,
         model,
         cached: true,
       });
     }
 
     const result = await requestSense(senseRequest);
+    recordUsage({ model: result.model, usage: result.usage, cached: false });
     cacheSense({
       cacheKey,
       term: senseRequest.term,

@@ -109,6 +109,21 @@ function migrate(db: Database.Database): void {
 
     CREATE INDEX IF NOT EXISTS vocabulary_recent ON vocabulary (created_at DESC);
 
+    -- Chaque appel au modèle, payé ou servi par le cache. Un journal plutôt
+    -- qu'un compteur : la consommation est celle du serveur, donc la même
+    -- depuis le téléphone, le portable ou n'importe quelle session.
+    CREATE TABLE IF NOT EXISTS llm_usage (
+      id                INTEGER PRIMARY KEY AUTOINCREMENT,
+      model             TEXT NOT NULL,
+      prompt_tokens     INTEGER NOT NULL,
+      completion_tokens INTEGER NOT NULL,
+      total_tokens      INTEGER NOT NULL,
+      cached            INTEGER NOT NULL,
+      created_at        INTEGER NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS llm_usage_recent ON llm_usage (created_at DESC);
+
     -- Une explication ne dépend que du mot et de son contexte : la recalculer
     -- coûterait des jetons pour un résultat identique.
     CREATE TABLE IF NOT EXISTS llm_senses (

@@ -42,7 +42,7 @@
     "french": "Français",
     "english": "English",
     "tokens": "Consommation",
-    "tokensHelp": "Depuis la dernière remise à zéro, sur cet appareil. Le tarif vient d'OpenRouter.",
+    "tokensHelp": "Depuis la dernière remise à zéro, tous appareils confondus. Le tarif vient d'OpenRouter.",
     "tokensBreakdown": "{prompt, number} en entrée · {completion, number} en sortie",
     "tokensCalls": "Appels payés",
     "tokensCached": "Servis par le cache",

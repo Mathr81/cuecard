@@ -5,6 +5,7 @@ import { contentLocale } from '@/i18n/content';
 import { isLocale } from '@/i18n/config';
 import { senseModel } from '@/lib/openrouter/client';
 import { modelPricing } from '@/lib/openrouter/pricing';
+import { usageTotals } from '@/lib/usage/repository';
 
 export default async function SettingsPage() {
   const t = await getTranslations('settings');
@@ -31,6 +32,7 @@ export default async function SettingsPage() {
           senseLocale={await contentLocale()}
           model={model}
           pricing={await modelPricing(model)}
+          usage={usageTotals()}
           hasOpenRouterKey={Boolean(process.env.OPENROUTER_API_KEY?.trim())}
         />
       </main>
