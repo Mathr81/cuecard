@@ -49,17 +49,53 @@ le `${...}` du `docker-compose.yml`, puis y reprend les clés d'API pour les
 injecter dans le conteneur. Le fichier n'entre jamais dans l'image — il est
 listé dans `.dockerignore` — donc aucune clé ne se retrouve dans une couche.
 
-Puis dans NPM, un Proxy Host :
+Puis dans NPM, **Hosts → Proxy Hosts → Add Proxy Host** :
 
-| Champ            | Valeur    |
-| ---------------- | --------- |
-| Forward Hostname | `cuecard` |
-| Forward Port     | `3000`    |
-| Websockets       | activé    |
-| SSL              | activé    |
+| Onglet  | Champ                 | Valeur                    |
+| ------- | --------------------- | ------------------------- |
+| Details | Domain Names          | `cuecard.mondomaine.fr`   |
+| Details | Scheme                | `http`                    |
+| Details | Forward Hostname/IP   | `cuecard`                 |
+| Details | Forward Port          | `3000`                    |
+| Details | Block Common Exploits | activé                    |
+| SSL     | SSL Certificate       | Request a new certificate |
+| SSL     | Force SSL, HTTP/2     | activés                   |
 
-Si `docker compose up` se plaint que le réseau n'existe pas, c'est que le nom
-dans `.env` ne correspond pas à celui de ta stack NPM.
+`cuecard` est le nom du conteneur, `3000` le port **interne**. Il n'y a pas de
+port sur l'hôte : NPM est sur le même réseau Docker et joint le conteneur
+directement, ce qui est plus sûr puisque rien n'est joignable en dehors.
+Le scheme est `http` — le chiffrement s'arrête à NPM, la liaison entre les
+deux conteneurs reste interne.
+
+« Websockets Support » n'est pas nécessaire : Next n'en ouvre qu'en mode
+développement. L'activer ne gêne pas non plus.
+
+**Force SSL n'est pas décoratif** : le service worker et l'installation de la
+PWA n'existent qu'en HTTPS. En clair, l'app marche mais ne s'installe pas et
+perd le mode hors ligne.
+
+### Si le Proxy Host renvoie 502
+
+Le symptôme veut presque toujours dire que les deux conteneurs ne se voient
+pas. La vérification décisive, depuis le conteneur NPM :
+
+```bash
+docker ps --format '{{.Names}}'                      # repérer le nom de NPM
+docker exec <conteneur-npm> wget -qO- http://cuecard:3000/api/health
+```
+
+Un `{"ok":true}` et le Proxy Host marchera. Sinon, les deux ne partagent pas
+le réseau :
+
+```bash
+docker network inspect "$CUECARD_NETWORK" \
+  --format '{{range .Containers}}{{.Name}} {{end}}'
+```
+
+`cuecard` **et** le conteneur NPM doivent tous les deux y figurer. Si `cuecard`
+manque, `CUECARD_NETWORK` dans `.env` ne désigne pas le bon réseau — et si
+`docker compose up` s'était plaint que le réseau n'existe pas, c'est la même
+cause.
 
 ### HTTPS et PWA
 
