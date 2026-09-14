@@ -60,6 +60,7 @@ async function renderMovie(tmdbId: number, language: string) {
     episode: null,
     episodeName: null,
     genres: movie.genres,
+    imdbId: movie.imdbId,
   };
 
   const t = await getTranslations('subtitles');
@@ -148,6 +149,7 @@ async function renderShow(
     episode,
     episodeName: chosen?.name ?? null,
     genres: show.genres,
+    imdbId: show.imdbId,
   };
 
   const pad = (value: number) => String(value).padStart(2, '0');

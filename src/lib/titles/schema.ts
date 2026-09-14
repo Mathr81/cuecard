@@ -10,4 +10,5 @@ export const titleRefSchema = z.object({
   episode: z.number().int().nonnegative().nullable(),
   episodeName: z.string().max(300).nullable(),
   genres: z.array(z.string().max(60)).max(10).default([]),
+  imdbId: z.string().max(20).nullable().default(null),
 });

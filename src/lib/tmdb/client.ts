@@ -68,6 +68,19 @@ interface TmdbGenre {
   name?: string;
 }
 
+interface TmdbExternalIds {
+  imdb_id?: string | null;
+}
+
+/** `append_to_response` évite un aller-retour supplémentaire pour l'IMDb. */
+function imdbIdOf(data: {
+  imdb_id?: string | null;
+  external_ids?: TmdbExternalIds;
+}): string | null {
+  const value = data.imdb_id ?? data.external_ids?.imdb_id ?? null;
+  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : null;
+}
+
 function genreNames(genres: TmdbGenre[] | undefined): string[] {
   return (genres ?? []).flatMap((genre) => (genre.name ? [genre.name] : [])).slice(0, 5);
 }
@@ -78,6 +91,7 @@ export interface TmdbShow {
   year: number | null;
   posterPath: string | null;
   genres: string[];
+  imdbId: string | null;
   seasons: TmdbSeason[];
 }
 
@@ -89,13 +103,14 @@ export async function getShow(tmdbId: number, language: string): Promise<TmdbSho
     first_air_date?: string;
     poster_path?: string | null;
     genres?: TmdbGenre[];
+    external_ids?: TmdbExternalIds;
     seasons?: Array<{
       season_number: number;
       name?: string;
       episode_count?: number;
       air_date?: string;
     }>;
-  }>(buildUrl(`/tv/${tmdbId}`, { language }), { headers });
+  }>(buildUrl(`/tv/${tmdbId}`, { language, append_to_response: 'external_ids' }), { headers });
 
   return {
     tmdbId: data.id,
@@ -103,6 +118,7 @@ export async function getShow(tmdbId: number, language: string): Promise<TmdbSho
     year: yearOf(data.first_air_date),
     posterPath: data.poster_path ?? null,
     genres: genreNames(data.genres),
+    imdbId: imdbIdOf(data),
     seasons: (data.seasons ?? [])
       // La saison 0 regroupe les hors-série : jamais ce que je cherche.
       .filter((season) => season.season_number > 0 && (season.episode_count ?? 0) > 0)
@@ -121,6 +137,7 @@ export interface TmdbMovie {
   year: number | null;
   posterPath: string | null;
   genres: string[];
+  imdbId: string | null;
 }
 
 export async function getMovie(tmdbId: number, language: string): Promise<TmdbMovie> {
@@ -131,7 +148,9 @@ export async function getMovie(tmdbId: number, language: string): Promise<TmdbMo
     release_date?: string;
     poster_path?: string | null;
     genres?: TmdbGenre[];
-  }>(buildUrl(`/movie/${tmdbId}`, { language }), { headers });
+    imdb_id?: string | null;
+    external_ids?: TmdbExternalIds;
+  }>(buildUrl(`/movie/${tmdbId}`, { language, append_to_response: 'external_ids' }), { headers });
 
   return {
     tmdbId: data.id,
@@ -139,6 +158,7 @@ export async function getMovie(tmdbId: number, language: string): Promise<TmdbMo
     year: yearOf(data.release_date),
     posterPath: data.poster_path ?? null,
     genres: genreNames(data.genres),
+    imdbId: imdbIdOf(data),
   };
 }
 

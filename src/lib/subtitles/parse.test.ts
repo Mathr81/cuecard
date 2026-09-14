@@ -227,3 +227,46 @@ describe('formatTimestamp', () => {
     expect(formatTimestamp(3_725_000)).toBe('1:02:05');
   });
 });
+
+describe('publicités des sources', () => {
+  it('écarte la réclame qu OpenSubtitles met en première réplique', () => {
+    const result = parseSubtitles(`1
+00:00:06,000 --> 00:00:12,074
+Support us and become VIP member
+to remove all ads from www.OpenSubtitles.org
+
+2
+00:01:04,500 --> 00:01:07,880
+I'm not gonna let you down.
+`);
+    expect(result.cues.map((cue) => cue.text)).toEqual(["I'm not gonna let you down."]);
+    expect(result.skipped).toBe(1);
+  });
+
+  it('écarte aussi la réclame de fin et les autres sites', () => {
+    for (const promo of [
+      'Advertise your product or brand here',
+      'Please rate this subtitle at www.osdb.link/abc',
+      'Downloaded From www.AllSubs.org',
+      'Sync and corrections by www.addic7ed.com',
+    ]) {
+      const result = parseSubtitles(`1
+00:00:01,000 --> 00:00:02,000
+${promo}
+
+2
+00:00:03,000 --> 00:00:04,000
+Real dialogue.
+`);
+      expect(result.cues.map((cue) => cue.text)).toEqual(['Real dialogue.']);
+    }
+  });
+
+  it('ne touche pas à une réplique qui parle simplement de publicité', () => {
+    const result = parseSubtitles(`1
+00:00:01,000 --> 00:00:02,000
+We should advertise on the radio.
+`);
+    expect(result.cues).toHaveLength(1);
+  });
+});

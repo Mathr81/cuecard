@@ -17,6 +17,7 @@ interface TitleRow {
   episode: number | null;
   episode_name: string | null;
   genres: string;
+  imdb_id: string | null;
   last_opened_at: number;
 }
 
@@ -43,6 +44,7 @@ function toRecentTitle(row: TitleRow): RecentTitle {
     episode: row.episode,
     episodeName: row.episode_name,
     genres: parseGenres(row.genres),
+    imdbId: row.imdb_id,
     lastOpenedAt: row.last_opened_at,
   };
 }
@@ -52,8 +54,8 @@ export function rememberTitle(ref: TitleRef, db: Database = getDatabase()): void
   // même milliseconde s'ordonneraient sinon au hasard, et le nettoyage
   // ci-dessous pourrait supprimer celui qu'on vient d'insérer.
   db.prepare(
-    `INSERT INTO titles (key, media_type, tmdb_id, name, year, poster_path, season, episode, episode_name, genres, last_opened_at)
-     VALUES (@key, @mediaType, @tmdbId, @name, @year, @posterPath, @season, @episode, @episodeName, @genres,
+    `INSERT INTO titles (key, media_type, tmdb_id, name, year, poster_path, season, episode, episode_name, genres, imdb_id, last_opened_at)
+     VALUES (@key, @mediaType, @tmdbId, @name, @year, @posterPath, @season, @episode, @episodeName, @genres, @imdbId,
              MAX(@now, IFNULL((SELECT MAX(last_opened_at) FROM titles), 0) + 1))
      ON CONFLICT(key) DO UPDATE SET
        name = excluded.name,
@@ -61,6 +63,7 @@ export function rememberTitle(ref: TitleRef, db: Database = getDatabase()): void
        poster_path = excluded.poster_path,
        episode_name = excluded.episode_name,
        genres = excluded.genres,
+       imdb_id = excluded.imdb_id,
        last_opened_at = excluded.last_opened_at`
   ).run({
     key: titleKey(ref),
@@ -73,6 +76,7 @@ export function rememberTitle(ref: TitleRef, db: Database = getDatabase()): void
     episode: ref.episode,
     episodeName: ref.episodeName,
     genres: JSON.stringify(ref.genres),
+    imdbId: ref.imdbId,
     now: Date.now(),
   });
 
@@ -96,7 +100,7 @@ export function forgetTitle(key: string, db: Database = getDatabase()): void {
 }
 
 export interface CachedSubtitleFile {
-  fileId: number;
+  fileId: string;
   titleKey: string;
   releaseName: string;
   content: string;
@@ -107,7 +111,7 @@ export interface CachedSubtitleFile {
 }
 
 export function cachedSubtitleFile(
-  fileId: number,
+  fileId: string,
   db: Database = getDatabase()
 ): CachedSubtitleFile | null {
   const row = db.prepare(`SELECT * FROM subtitle_files WHERE file_id = ?`).get(fileId) as
@@ -115,7 +119,7 @@ export function cachedSubtitleFile(
   if (!row) return null;
 
   return {
-    fileId: Number(row.file_id),
+    fileId: String(row.file_id),
     titleKey: String(row.title_key),
     releaseName: String(row.release_name),
     content: String(row.content),

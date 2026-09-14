@@ -25,6 +25,7 @@ function episode(season: number, number: number): TitleRef {
     episode: number,
     episodeName: `Episode ${number}`,
     genres: ['Crime', 'Drame'],
+    imdbId: 'tt0903747',
   };
 }
 
@@ -38,6 +39,7 @@ const movie: TitleRef = {
   episode: null,
   episodeName: null,
   genres: ['Science-Fiction'],
+  imdbId: 'tt0133093',
 };
 
 describe('titleKey', () => {
@@ -97,6 +99,7 @@ describe('history', () => {
       episodeName: 'Episode 7',
       posterPath: '/poster.jpg',
       genres: ['Crime', 'Drame'],
+      imdbId: 'tt0903747',
     });
   });
 
@@ -118,7 +121,7 @@ describe('subtitle cache', () => {
   it('stores and returns a downloaded file', () => {
     cacheSubtitleFile(
       {
-        fileId: 42,
+        fileId: 'opensubtitles:42',
         titleKey: 'movie:603',
         releaseName: 'The.Matrix.1999.1080p',
         content: '1\n00:00:01,000 --> 00:00:02,000\nHello',
@@ -130,15 +133,15 @@ describe('subtitle cache', () => {
       db
     );
 
-    expect(cachedSubtitleFile(42, db)).toMatchObject({
-      fileId: 42,
+    expect(cachedSubtitleFile('opensubtitles:42', db)).toMatchObject({
+      fileId: 'opensubtitles:42',
       releaseName: 'The.Matrix.1999.1080p',
       cueCount: 1,
     });
   });
 
   it('returns nothing for a file never downloaded', () => {
-    expect(cachedSubtitleFile(7, db)).toBeNull();
+    expect(cachedSubtitleFile('shegu:7', db)).toBeNull();
   });
 });
 

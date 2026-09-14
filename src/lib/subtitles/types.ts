@@ -20,7 +20,7 @@ export interface SubtitleDocument {
   name: string;
   /** Deuxième ligne : "S01E04 · Titre de l'épisode", ou le nom de la release. */
   subtitle: string | null;
-  source: 'upload' | 'opensubtitles';
+  source: 'upload' | 'opensubtitles' | 'shegu';
   releaseName: string | null;
   encoding: string;
   format: 'srt' | 'vtt';

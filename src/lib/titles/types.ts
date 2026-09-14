@@ -12,6 +12,8 @@ export interface TitleRef {
   episodeName: string | null;
   /** Genres TMDB : « Crime, Drama » ne se traduit pas comme « Comedy ». */
   genres: string[];
+  /** Identifiant IMDb : la seule clé que comprend l'API OpenSubtitles. */
+  imdbId: string | null;
 }
 
 export interface RecentTitle extends TitleRef {
@@ -39,15 +41,4 @@ export interface TmdbEpisode {
   episodeNumber: number;
   name: string;
   airDate: string | null;
-}
-
-export interface SubtitleCandidate {
-  fileId: number;
-  releaseName: string;
-  downloadCount: number;
-  /** Souvent absent, mais quand il est là c'est le meilleur signal de qualité. */
-  ratings: number | null;
-  fromTrusted: boolean;
-  hearingImpaired: boolean;
-  uploadDate: string | null;
 }

@@ -136,12 +136,14 @@
     "searching": "Searching for English subtitles…",
     "best": "Most downloaded",
     "downloads": "{count, plural, one {# download} other {# downloads}}",
-    "trusted": "trusted uploader",
-    "hearingImpaired": "hearing impaired",
     "downloading": "Downloading…",
     "none": "No English subtitles for this title.",
-    "noneHint": "OpenSubtitles has nothing indexed for this TMDB id. A hand-loaded file works just as well.",
-    "uploadInstead": "Load an .srt by hand"
+    "noneHint": "Neither source has English subtitles for this title. A hand-loaded file works just as well.",
+    "uploadInstead": "Load an .srt by hand",
+    "provider": {
+      "opensubtitles": "OpenSubtitles",
+      "shegu": "shegu"
+    }
   },
   "timing": {
     "gotoButton": "Go to time",

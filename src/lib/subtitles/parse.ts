@@ -1,11 +1,12 @@
 import { cleanCueText } from './clean';
 import { mergeOverlappingCues } from './merge';
+import { isPromoCue } from './promo';
 import type { Cue } from './types';
 
 export interface ParseResult {
   format: 'srt' | 'vtt';
   cues: Cue[];
-  /** Blocs ignorés car sans texte exploitable, utile pour diagnostiquer un fichier étrange. */
+  /** Blocs ignorés : vides après nettoyage, ou publicité de la source. */
   skipped: number;
 }
 
@@ -87,7 +88,7 @@ export function parseSubtitles(text: string): ParseResult {
   const cues: Cue[] = [];
   for (const item of raw) {
     const cleaned = cleanCueText(item.lines.join('\n'));
-    if (cleaned.length === 0) {
+    if (cleaned.length === 0 || isPromoCue(cleaned)) {
       skipped += 1;
       continue;
     }

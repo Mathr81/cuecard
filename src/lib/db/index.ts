@@ -20,6 +20,25 @@ export function getDatabase(): Database.Database {
 }
 
 /** Exposé pour les tests, qui ouvrent une base jetable par suite. */
+/**
+ * Les sources sans clé identifient un fichier par une chaîne
+ * (`opensubtitles:45899`, `shegu:…`) là où l'API v1 donnait un entier. Or un
+ * `INTEGER PRIMARY KEY` est un alias de rowid : il refuse une chaîne. Le cache
+ * étant, par nature, reconstructible, on jette l'ancienne table plutôt que de
+ * transposer des identifiants qui n'ont plus cours.
+ */
+function dropLegacySubtitleCache(db: Database.Database): void {
+  const columns = db.prepare(`PRAGMA table_info(subtitle_files)`).all() as Array<{
+    name: string;
+    type: string;
+  }>;
+
+  const fileId = columns.find((column) => column.name === 'file_id');
+  if (fileId && fileId.type.toUpperCase() === 'INTEGER') {
+    db.exec(`DROP TABLE subtitle_files`);
+  }
+}
+
 export function createDatabase(file: string): Database.Database {
   const db = new Database(file);
   db.pragma('foreign_keys = ON');
@@ -28,6 +47,8 @@ export function createDatabase(file: string): Database.Database {
 }
 
 function migrate(db: Database.Database): void {
+  dropLegacySubtitleCache(db);
+
   db.exec(`
     CREATE TABLE IF NOT EXISTS titles (
       key            TEXT PRIMARY KEY,
@@ -40,6 +61,7 @@ function migrate(db: Database.Database): void {
       episode        INTEGER,
       episode_name   TEXT,
       genres         TEXT NOT NULL DEFAULT '[]',
+      imdb_id        TEXT,
       last_opened_at INTEGER NOT NULL
     );
 
@@ -48,7 +70,7 @@ function migrate(db: Database.Database): void {
     -- Un fichier téléchargé chez OpenSubtitles ne l'est jamais deux fois : le
     -- quota journalier de téléchargements est la ressource la plus rare.
     CREATE TABLE IF NOT EXISTS subtitle_files (
-      file_id      INTEGER PRIMARY KEY,
+      file_id      TEXT PRIMARY KEY,
       title_key    TEXT NOT NULL,
       release_name TEXT NOT NULL,
       content      TEXT NOT NULL,

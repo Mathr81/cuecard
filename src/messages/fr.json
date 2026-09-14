@@ -136,12 +136,14 @@
     "searching": "Recherche des sous-titres anglais…",
     "best": "Le plus téléchargé",
     "downloads": "{count, plural, one {# téléchargement} other {# téléchargements}}",
-    "trusted": "uploadeur de confiance",
-    "hearingImpaired": "sourds et malentendants",
     "downloading": "Téléchargement…",
     "none": "Aucun sous-titre anglais pour ce titre.",
-    "noneHint": "OpenSubtitles n'a rien indexé pour cet identifiant TMDB. Un fichier chargé à la main marche aussi bien.",
-    "uploadInstead": "Charger un .srt à la main"
+    "noneHint": "Aucune des deux sources n'a de sous-titres anglais pour ce titre. Un fichier chargé à la main marche aussi bien.",
+    "uploadInstead": "Charger un .srt à la main",
+    "provider": {
+      "opensubtitles": "OpenSubtitles",
+      "shegu": "shegu"
+    }
   },
   "timing": {
     "gotoButton": "Aller au temps",

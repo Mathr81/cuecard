@@ -7,7 +7,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { ExternalError } from '@/components/ExternalError';
 import { ApiError, apiSend, type ApiErrorCode } from '@/lib/api/client';
 import type { SubtitleDocument } from '@/lib/subtitles/types';
-import type { SubtitleCandidate, TitleRef } from '@/lib/titles/types';
+import type { SubtitleCandidate } from '@/lib/subtitles/providers/types';
+import type { TitleRef } from '@/lib/titles/types';
 import { useSubtitleStore } from '@/store/subtitles';
 
 type State =
@@ -22,7 +23,7 @@ export function SubtitlePicker({ title }: { title: TitleRef }) {
 
   const [state, setState] = useState<State>({ status: 'loading' });
   const [attempt, setAttempt] = useState(0);
-  const [downloading, setDownloading] = useState<number | null>(null);
+  const [downloading, setDownloading] = useState<string | null>(null);
   const [downloadError, setDownloadError] = useState<ApiErrorCode | null>(null);
 
   useEffect(() => {
@@ -49,18 +50,14 @@ export function SubtitlePicker({ title }: { title: TitleRef }) {
   }, []);
 
   async function choose(candidate: SubtitleCandidate) {
-    setDownloading(candidate.fileId);
+    setDownloading(candidate.id);
     setDownloadError(null);
 
     try {
       const data = await apiSend<{ document: SubtitleDocument }>(
         '/api/subtitles/download',
         'POST',
-        {
-          title,
-          fileId: candidate.fileId,
-          releaseName: candidate.releaseName,
-        }
+        { title, candidate }
       );
       loadDocument(data.document);
       router.push('/reader');
@@ -106,16 +103,16 @@ export function SubtitlePicker({ title }: { title: TitleRef }) {
     <div className="flex flex-col gap-3">
       <ul className="flex flex-col gap-2">
         {state.candidates.map((candidate, rank) => (
-          <li key={candidate.fileId}>
+          <li key={candidate.id}>
             <button
               type="button"
               disabled={downloading !== null}
               onClick={() => void choose(candidate)}
-              className="flex w-full min-h-20 flex-col justify-center gap-1 rounded-2xl border border-line bg-surface px-4 py-3 text-left active:bg-surface-high disabled:opacity-50"
+              className="flex min-h-20 w-full flex-col justify-center gap-1 rounded-2xl border border-line bg-surface px-4 py-3 text-left active:bg-surface-high disabled:opacity-50"
             >
               <span className="flex items-center gap-2">
                 {rank === 0 ? (
-                  <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-semibold text-accent-ink">
+                  <span className="shrink-0 rounded-full bg-accent px-2 py-0.5 text-xs font-semibold text-accent-ink">
                     {t('best')}
                   </span>
                 ) : null}
@@ -124,11 +121,14 @@ export function SubtitlePicker({ title }: { title: TitleRef }) {
                 </span>
               </span>
               <span className="text-xs text-dim">
-                {t('downloads', { count: candidate.downloadCount })}
-                {candidate.fromTrusted ? ` · ${t('trusted')}` : ''}
-                {candidate.hearingImpaired ? ` · ${t('hearingImpaired')}` : ''}
+                {/* shegu ne compte pas les téléchargements : mieux vaut ne rien
+                    afficher que d'inventer un zéro trompeur. */}
+                {candidate.downloadCount !== null
+                  ? `${t('downloads', { count: candidate.downloadCount })} · `
+                  : ''}
+                {t(`provider.${candidate.provider}`)}
               </span>
-              {downloading === candidate.fileId ? (
+              {downloading === candidate.id ? (
                 <span className="text-xs text-accent">{t('downloading')}</span>
               ) : null}
             </button>

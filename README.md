@@ -3,7 +3,7 @@
 Apprendre l'anglais avec les sous-titres des films et séries regardés en
 streaming, depuis son téléphone, en second écran.
 
-Le timing des sous-titres d'OpenSubtitles ne correspond jamais à celui du
+Le timing des sous-titres téléchargés ne correspond jamais à celui du
 lecteur Netflix ou Prime : l'entrée principale de l'app est donc la **recherche
 textuelle** d'une réplique, pas le timestamp.
 
@@ -21,11 +21,11 @@ npm run dev
 
 Puis ouvrir <http://localhost:3000> et charger un fichier `.srt` ou `.vtt`.
 
-Copier `.env.example` vers `.env.local` et renseigner `TMDB_API_KEY` et
-`OPENSUBTITLES_API_KEY` pour la recherche de titres et le téléchargement des
-sous-titres, `OPENROUTER_API_KEY` pour le sens en contexte. Sans clés, le
-chargement manuel d'un `.srt` et le dictionnaire fonctionnent toujours, et
-chaque écran dit précisément quelle clé manque.
+Copier `.env.example` vers `.env.local` et renseigner `TMDB_API_KEY` pour la
+recherche de titres, `OPENROUTER_API_KEY` pour le sens en contexte. **Les
+sous-titres ne demandent aucune clé** : ils viennent de sources ouvertes, sans
+quota journalier. Sans clés du tout, le chargement manuel d'un `.srt` et le
+dictionnaire fonctionnent toujours, et chaque écran dit ce qui manque.
 
 `OPENROUTER_MODEL` choisit le modèle ; la valeur par défaut est un point de
 départ rapide et bon marché, à changer selon ce qui est disponible. Le modèle
@@ -65,7 +65,7 @@ reste utilisable mais ne s'installe pas et ne marche pas hors ligne : pense à
 demander un certificat à NPM pour cet hôte.
 
 cuecard n'a **aucune authentification**. Sur un domaine public, n'importe qui
-peut brûler tes quotas OpenSubtitles et OpenRouter — la liste d'accès de NPM
+peut brûler ton quota OpenRouter — la liste d'accès de NPM
 (Access Lists → Basic Auth) se charge de fermer la porte.
 
 ### Au quotidien
@@ -112,7 +112,8 @@ bonne santé.
       à partir d'un fichier chargé à la main.
 - [x] **Étape 2** — tap sur un mot, sélection d'expression, dictionnaire dans
       une bottom sheet.
-- [x] **Étape 3** — TMDB + OpenSubtitles, calibrage et mémorisation du décalage.
+- [x] **Étape 3** — TMDB + sources de sous-titres, calibrage et mémorisation
+      du décalage.
 - [x] **Étape 4** — sens en contexte via OpenRouter.
 - [x] **Étape 5** — carnet de vocabulaire, export Anki, révision, PWA hors ligne.
 
@@ -177,13 +178,28 @@ consultés en accès direct sur l'accueil, stocké en base ; celui qui est déj�
 chargé est marqué « en cours » et renvoie droit au lecteur, sans reconsommer
 de quota.
 
-**Sous-titres** — OpenSubtitles API v1, anglais, triés par nombre de
-téléchargements, les trois meilleurs candidats avec leur nom de release, leur
-compte de téléchargements et leurs étiquettes. Un épisode est cherché par
-série + saison + épisode, bien plus fiable que par l'id TMDB de l'épisode.
-User-Agent obligatoire envoyé, appels espacés de 250 ms. Chaque fichier
-téléchargé est mis en cache en base par `file_id` : le quota journalier ne
-paie jamais deux fois le même fichier.
+**Sous-titres** — deux sources ouvertes, interrogées en parallèle, sans clé ni
+quota journalier :
+
+- **OpenSubtitles** par son API historique (`rest.opensubtitles.org`), qui
+  donne les noms de release et les compteurs de téléchargement. Elle plafonne
+  à cent résultats toutes langues confondues, si bien que l'anglais peut
+  n'y figurer nulle part — le filtre `sublanguageid-eng` déplace la sélection
+  côté serveur et règle le problème. Ses fichiers arrivent gzippés.
+- **shegu**, qui cherche directement par identifiant TMDB, sans passer par
+  l'IMDb, et répond sur des titres où l'autre ne trouve rien.
+
+L'échec de l'une n'efface jamais les résultats de l'autre ; il faut que les
+deux tombent pour parler de panne. Les candidats sont dédoublonnés, classés
+par nombre de téléchargements — ceux qui n'en ont pas passent derrière — et
+les six premiers sont proposés avec leur source. Chaque fichier téléchargé est
+mis en cache en base : on ne redemande jamais deux fois la même chose à des
+services qu'on ne paie pas.
+
+Les fichiers d'OpenSubtitles s'ouvrent et se referment souvent sur une réclame
+(« Support us and become VIP member », `osdb.link`). Le parseur l'écarte :
+sinon la première réplique du lecteur serait une publicité, et elle
+remonterait dans les recherches.
 
 **Calibrage** — le mode texte reste l'entrée principale ; deux boutons sous le
 champ donnent accès au mode temps. « Caler » demande le temps affiché par le
