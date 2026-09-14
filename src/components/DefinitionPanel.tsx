@@ -68,8 +68,8 @@ function PanelBody({
     <>
       <SaveToNotebook target={lookup.target} sense={sense} />
       <div className="mt-5 flex flex-col">
-        <DictionaryBlock term={lookup.term} isExpression={isExpression} />
         <ContextualSenseBlock term={lookup.term} context={lookup.scene} onSense={onSense} />
+        <DictionaryBlock term={lookup.term} isExpression={isExpression} />
         <ExternalLinksBlock term={lookup.term} />
       </div>
     </>
