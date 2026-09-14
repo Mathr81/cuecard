@@ -37,14 +37,17 @@ L'app est prévue pour vivre derrière **Nginx Proxy Manager** : elle ne publie
 aucun port, NPM la joint par son nom sur le réseau Docker partagé.
 
 ```bash
-cp .env.example .env      # puis renseigner les clés
-
-# Le réseau de la stack NPM : `docker network ls` donne son nom exact
-# (souvent « npm » ou « nginx-proxy-manager_default »).
-echo 'CUECARD_NETWORK=npm' >> .env
-
+cp .env.example .env
+docker network ls          # relever le nom du réseau de la stack NPM
+$EDITOR .env               # renseigner les clés et CUECARD_NETWORK
 docker compose up -d --build
+docker compose ps          # doit afficher « healthy »
 ```
+
+`.env` sert deux fois : Docker Compose y lit `CUECARD_NETWORK` pour résoudre
+le `${...}` du `docker-compose.yml`, puis y reprend les clés d'API pour les
+injecter dans le conteneur. Le fichier n'entre jamais dans l'image — il est
+listé dans `.dockerignore` — donc aucune clé ne se retrouve dans une couche.
 
 Puis dans NPM, un Proxy Host :
 
